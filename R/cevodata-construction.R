@@ -7,9 +7,11 @@ new_cevodata <- function(name) {
     CNAs = list(),
     models = list(),
     misc = list(),
-    active_SNVs = "",
-    active_CNAs = "",
-    active_models = ""
+    settings = list(
+      active_SNVs = NULL,
+      active_CNAs = NULL,
+      active_models = NULL
+    )
   )
   structure(cd, class = "cevodata")
 }
@@ -18,8 +20,6 @@ new_cevodata <- function(name) {
 #' Create new cevomod dataset object
 #'
 #' @param name dataset name
-#' @param genome genome version
-#' @param cancer cancer type from `driver_genes` tbl
 #' @param snvs tibble with SNVs
 #' @param snvs_name name for SNVs assay
 #' @param cnas tibble with CNAs
@@ -30,7 +30,7 @@ new_cevodata <- function(name) {
 init_cevodata <- function(name = "cevodata object",
                           snvs = NULL, snvs_name = NULL,
                           cnas = NULL, cnas_name = NULL) {
-  cd <- new_cevodata(name, genome, cancer)
+  cd <- new_cevodata(name)
   if (!is.null(snvs)) {
     cd <- add_SNV_data(cd, snvs, snvs_name)
   }
@@ -49,17 +49,12 @@ init_cevodata <- function(name = "cevodata object",
 #' @param which assay to use - uses active_SNVs if nonei
 #' @param ... other arguments
 #' @name assays
+NULL
 
-
-#' @rdname assays
-#' @export
-add_SNV_data <- function(object, ...) {
-  UseMethod("add_SNV_data")
-}
 
 #' @describeIn assays Add new SNVs to cevodata
 #' @export
-add_SNV_data.cevodata <- function(object, snvs, name = NULL, ...) {
+add_SNV_data <- function(object, snvs, name = NULL, ...) {
   if(is.null(name)) {
     n <- length(object$SNVs)
     name <- if (n == 0) "snvs" else str_c("snvs", n)
@@ -76,15 +71,9 @@ add_SNV_data.cevodata <- function(object, snvs, name = NULL, ...) {
 }
 
 
-#' @rdname assays
-#' @export
-add_CNA_data <- function(object, ...) {
-  UseMethod("add_CNA_data")
-}
-
 #' @describeIn assays Add new CNAs to cevodata
 #' @export
-add_CNA_data.cevodata <- function(object, cnas, name = NULL, ...) {
+add_CNA_data <- function(object, cnas, name = NULL, ...) {
   if(is.null(name)) {
     n <- length(object$CNAs)
     name <- if (n == 0) "cnas" else str_c("cnas", n)
@@ -118,63 +107,41 @@ validate_CNAs <- function(cnas) {
 #' @param value name of new default assay
 #' @param ... other arguments
 #' @name active_assays
+NULL
 
-
-#' @rdname active_assays
-#' @export
-default_SNVs <- function(object, ...) {
-  UseMethod("default_SNVs")
-}
 
 #' @describeIn active_assays Get default SNVs assay of cevodata
 #' @export
-default_SNVs.cevodata <- function(object, ...) {
-  object$active_SNVs
+default_SNVs <- function(object, ...) {
+  object$settings$active_SNVs
 }
 
-
-#' @rdname active_assays
-#' @export
-`default_SNVs<-` <- function(object, ..., value) {
-  UseMethod("default_SNVs<-")
-}
 
 #' @describeIn active_assays Set default SNVs assay of cevodata
 #' @export
-`default_SNVs<-.cevodata` <- function(object, ..., value) {
+`default_SNVs<-` <- function(object, ..., value) {
   if (value %not in% names(object$SNVs)) {
     stop("Chosen SNV assay must exist in object$SNVs")
   }
-  object$active_SNVs <- value
+  object$settings$active_SNVs <- value
   object
 }
 
 
-#' @rdname active_assays
-#' @export
-default_CNAs <- function(object, ...) {
-  UseMethod("default_CNAs")
-}
-
 #' @describeIn active_assays Get default CNAs assay of cevodata
 #' @export
-default_CNAs.cevodata <- function(object, ...) {
-  object$active_CNAs
+default_CNAs <- function(object, ...) {
+  object$settings$active_CNAs
 }
 
-#' @rdname active_assays
-#' @export
-`default_CNAs<-` <- function(object, ..., value) {
-  UseMethod("default_CNAs<-")
-}
 
 #' @describeIn active_assays Set default CNAs assay of cevodata
 #' @export
-`default_CNAs<-.cevodata` <- function(object, ..., value) {
+`default_CNAs<-` <- function(object, ..., value) {
   if (value %not in% names(object$CNAs)) {
     stop("Chosen CNA assay must exist in object$CNAs")
   }
-  object$active_CNAs <- value
+  object$settings$active_CNAs <- value
   object
 }
 
@@ -184,39 +151,28 @@ default_CNAs.cevodata <- function(object, ...) {
 #' @param data name of new default assay
 #' @param ... other arguments
 #' @name cevo_metadata
+NULL
 
-
-#' @rdname cevo_metadata
-#' @export
-add_patient_data <- function(object, ...) {
-  UseMethod("add_patient_data")
-}
 
 #' @describeIn cevo_metadata Add patient data to cevodata object
 #' @export
-add_patient_data.cevodata <- function(object, data, ...) {
+add_patient_data <- function(object, data, ...) {
   if ("patient_id" %not in% colnames(data)) {
     stop("Data must have patient_id column!")
   }
   if (is.null(object$metadata)) {
     object$metadata <- data
   } else {
-    keys <- intersect(c("patient_id", "sample_id", "sample"), colnames(data))
+    keys <- intersect(c("patient_id", "sample_id"), colnames(data))
     object$metadata <- full_join(object$metadata, data, by = keys)
   }
   object
 }
 
 
-#' @rdname cevo_metadata
-#' @export
-add_sample_data <- function(object, ...) {
-  UseMethod("add_sample_data")
-}
-
 #' @describeIn cevo_metadata Add samples' data to cevodata object
 #' @export
-add_sample_data.cevodata <- function(object, data, ...) {
+add_sample_data <- function(object, data, ...) {
   if ("sample_id" %not in% colnames(data)) {
     stop("Data must have sample_id column!")
   }

@@ -3,9 +3,7 @@
 \name{assays}
 \alias{assays}
 \alias{add_SNV_data}
-\alias{add_SNV_data.cevodata}
 \alias{add_CNA_data}
-\alias{add_CNA_data.cevodata}
 \alias{SNVs}
 \alias{SNVs.cevodata}
 \alias{get_SNVs_wider}
@@ -13,13 +11,9 @@
 \alias{CNAs.cevodata}
 \title{Get/Add SNV/CNA data from the cevodata dataset}
 \usage{
-add_SNV_data(object, ...)
+add_SNV_data(object, snvs, name = NULL, ...)
 
-\method{add_SNV_data}{cevodata}(object, snvs, name = NULL, ...)
-
-add_CNA_data(object, ...)
-
-\method{add_CNA_data}{cevodata}(object, cnas, name = NULL, ...)
+add_CNA_data(object, cnas, name = NULL, ...)
 
 SNVs(object, ...)
 
@@ -34,11 +28,11 @@ CNAs(object, ...)
 \arguments{
 \item{object}{cevodata object}
 
-\item{...}{other arguments}
-
 \item{snvs}{tibble with SNVs}
 
 \item{name}{name for SNVs/CNAs assay}
+
+\item{...}{other arguments}
 
 \item{cnas}{tibble with CNAs}
 
@@ -54,9 +48,9 @@ Get/Add SNV/CNA data from the cevodata dataset
 }
 \section{Functions}{
 \itemize{
-\item \code{add_SNV_data(cevodata)}: Add new SNVs to cevodata
+\item \code{add_SNV_data()}: Add new SNVs to cevodata
 
-\item \code{add_CNA_data(cevodata)}: Add new CNAs to cevodata
+\item \code{add_CNA_data()}: Add new CNAs to cevodata
 
 \item \code{SNVs(cevodata)}: Get SNVs from cevodata dataset
 

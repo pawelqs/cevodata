@@ -3,30 +3,18 @@
 \name{active_assays}
 \alias{active_assays}
 \alias{default_SNVs}
-\alias{default_SNVs.cevodata}
 \alias{default_SNVs<-}
-\alias{default_SNVs<-.cevodata}
 \alias{default_CNAs}
-\alias{default_CNAs.cevodata}
 \alias{default_CNAs<-}
-\alias{default_CNAs<-.cevodata}
 \title{Get/Set active assays of the cevodata object}
 \usage{
 default_SNVs(object, ...)
 
-\method{default_SNVs}{cevodata}(object, ...)
-
 default_SNVs(object, ...) <- value
-
-\method{default_SNVs}{cevodata}(object, ...) <- value
 
 default_CNAs(object, ...)
 
-\method{default_CNAs}{cevodata}(object, ...)
-
 default_CNAs(object, ...) <- value
-
-\method{default_CNAs}{cevodata}(object, ...) <- value
 }
 \arguments{
 \item{object}{object}
@@ -40,12 +28,12 @@ Get/Set active assays of the cevodata object
 }
 \section{Functions}{
 \itemize{
-\item \code{default_SNVs(cevodata)}: Get default SNVs assay of cevodata
+\item \code{default_SNVs()}: Get default SNVs assay of cevodata
 
-\item \code{default_SNVs(cevodata) <- value}: Set default SNVs assay of cevodata
+\item \code{default_SNVs(object, ...) <- value}: Set default SNVs assay of cevodata
 
-\item \code{default_CNAs(cevodata)}: Get default CNAs assay of cevodata
+\item \code{default_CNAs()}: Get default CNAs assay of cevodata
 
-\item \code{default_CNAs(cevodata) <- value}: Set default CNAs assay of cevodata
+\item \code{default_CNAs(object, ...) <- value}: Set default CNAs assay of cevodata
 
 }}
