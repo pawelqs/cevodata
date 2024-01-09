@@ -4,12 +4,12 @@
 \name{cevodata-package}
 \alias{cevodata}
 \alias{cevodata-package}
-\title{cevodata: What the Package Does (One Line, Title Case)}
+\title{cevodata: Class for storing cancer DNAseq data.}
 \description{
-What the package does (one paragraph).
+cevodata provides a <cevodata> class, an R class for storing the DNA sequencing data for many patients and many tumor samples in a signle object, and methods to manipulate it.
 }
 \author{
-\strong{Maintainer}: Paweł Kuś \email{kpawel2210@gmail.com}
+\strong{Maintainer}: Paweł Kuś \email{kpawel2210@gmail.com} (\href{https://orcid.org/0000-0002-4367-9821}{ORCID})
 
 }
 \keyword{internal}
