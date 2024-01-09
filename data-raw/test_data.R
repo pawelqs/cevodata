@@ -36,24 +36,3 @@ test_data <- init_cevodata(name = "test_data") |>
   add_sample_data(sample_data)
 
 use_data(test_data, overwrite = TRUE)
-
-
-## ------------------------ Fitted -------------------------------------------
-
-withr::with_seed(
-  123,
-  test_data_fitted <- test_data |>
-    intervalize_mutation_frequencies() |>
-    calc_SFS() |>
-    fit_powerlaw_tail_fixed() |>
-    fit_subclones() |>
-    fit_powerlaw_tail_optim() |>
-    fit_subclones()# |>
-    # fit_powerlaw_tail_optim(name = "bs_powerlaw_model", bootstraps = 20)
-)
-
-test_data_fitted <- test_data_fitted |>
-  fit_powerlaw_tail_optim(name = "bs_powerlaw_model", bootstraps = 50)
-
-test_data_fitted$active_models <- "powerlaw_optim_subclones"
-use_data(test_data_fitted, overwrite = TRUE)
