@@ -16,7 +16,6 @@ glimpse(mutations)
 
 
 snvs <- mutations %>%
-  left_join(variant_classification) %>%
   transmute(
     sample_id = Tumor_Sample_Barcode,
     chrom = str_c("chr", Chromosome),
@@ -33,7 +32,6 @@ snvs <- mutations %>%
     variant_class = VARIANT_CLASS,
     variant_type = Variant_Type,
     Variant_Classification,
-    variant_classification,
     impact = IMPACT,
     consequence = Consequence,
     NCBI_Build
@@ -91,7 +89,7 @@ TMB |>
 
 ## -------------------------------- cevodata ----------------------------------
 
-tcga_brca <- init_cevodata("TCGA-BRCA data", genome = "hg37") |>
+tcga_brca <- init_cevodata("TCGA-BRCA data") |>
   add_SNV_data(snvs, name = "TCGA") |>
   add_CNA_data(cnas, name = "TCGA") |>
   add_sample_data(samples_data) |>
@@ -105,17 +103,17 @@ top_mutated_patients <- TMB %>%
   setdiff(c("TCGA-BH-A18G-01"))
 
 tcga_brca_test <- tcga_brca |>
-  filter(sample_id %in% top_mutated_patients) |>
+  filter(sample_id %in% top_mutated_patients)
   # calc_mutation_frequencies(method = "use_VAF") |>
-  intervalize_mutation_frequencies() |>
-  calc_SFS() |>
-  calc_cumulative_tails() |>
-  calc_Mf_1f() |>
-  fit_powerlaw_tail_fixed() |>
-  fit_subclones() |>
-  fit_powerlaw_tail_optim() |>
-  fit_subclones()
-tcga_brca_test$active_models <- "powerlaw_fixed_subclones"
+  # intervalize_mutation_frequencies() |>
+  # calc_SFS() |>
+  # calc_cumulative_tails() |>
+  # calc_Mf_1f() |>
+  # fit_powerlaw_tail_fixed() |>
+  # fit_subclones() |>
+  # fit_powerlaw_tail_optim() |>
+  # fit_subclones()
+# tcga_brca_test$active_models <- "powerlaw_fixed_subclones"
 
 
 # usethis::use_data(tcga_brca, overwrite = TRUE)
