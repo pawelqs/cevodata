@@ -1,4 +1,6 @@
 
+# ---------------------------- cevodata constructors ---------------------------
+
 new_cevodata <- function(name) {
   cd <- list(
     name = name,
@@ -40,6 +42,8 @@ init_cevodata <- function(name = "cevodata object",
   cd
 }
 
+
+# --------------------------------- Data assays --------------------------------
 
 #' Get/Add SNV/CNA data from the cevodata dataset
 #' @param object object
@@ -146,6 +150,8 @@ default_CNAs <- function(object, ...) {
 }
 
 
+# --------------------------------- Metadata -----------------------------------
+
 #' Add metadata to the cevodata object
 #' @param object object
 #' @param data name of new default assay
@@ -191,6 +197,9 @@ add_sample_data <- function(object, data, ...) {
   object
 }
 
+
+
+# --------------------------------- Misc ---------------------------------------
 
 #' Choose purity measure
 #'
