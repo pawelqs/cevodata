@@ -9,12 +9,10 @@ test_that("init_cevodata works", {
   expect_s3_class(cd, "cevodata")
   expect_equal(length(cd$SNVs), 0)
   expect_equal(length(cd$cNVs), 0)
-  expect_equal(cd$genome, "unknown")
-  cd <- init_cevodata("TCGA BRCA small", genome = "hg19")
+  cd <- init_cevodata("TCGA BRCA small")
   expect_s3_class(cd, "cevodata")
   expect_equal(length(cd$SNVs), 0)
   expect_equal(length(cd$cNVs), 0)
-  expect_equal(cd$genome, "hg19")
 })
 
 
