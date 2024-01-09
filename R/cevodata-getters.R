@@ -133,18 +133,18 @@ get_SNVs_wider_intervals <- function(object, fill_na = NULL, bins = NULL) {
 }
 
 
-#' Get SNVs with merged CNVs
-#' @param object cevodata object with SNVs and CNVs
+#' Get SNVs with merged CNAs
+#' @param object cevodata object with SNVs and CNAs
 #' @export
-SNVs_CNVs <- function(object) {
+SNVs_CNAs <- function(object) {
   SNVs(object) |>
-    join_CNVs(CNVs(object))
+    join_CNAs(CNAs(object))
 }
 
 
-join_CNVs <- function(snvs, cnvs) {
+join_CNAs <- function(snvs, cnas) {
   left_join(
-    snvs, cnvs,
+    snvs, cnas,
     by = join_by("sample_id", "chrom", "pos" >= "start", "pos" <= "end"),
     relationship = "many-to-one"
   )
@@ -246,40 +246,40 @@ fix_powerlaw_N_mutations <- function(models, cd, models_name) {
 }
 
 
-## ---------------------------------- CNVs -----------------------------------
+## ---------------------------------- CNAs -----------------------------------
 
 #' @rdname assays
 #' @export
-CNVs <- function(object, ...) {
-  UseMethod("CNVs")
+CNAs <- function(object, ...) {
+  UseMethod("CNAs")
 }
 
-#' @describeIn assays Get CNVs from cevodata dataset
+#' @describeIn assays Get CNAs from cevodata dataset
 #' @export
-CNVs.cevodata <- function(object, which = object$active_CNVs, ...) {
-  if (which %not in% names(object$CNVs)) {
-    stop(str_c(which, " does not exist in object$CNVs"))
+CNAs.cevodata <- function(object, which = object$active_CNAs, ...) {
+  if (which %not in% names(object$CNAs)) {
+    stop(str_c(which, " does not exist in object$CNAs"))
   }
-  object$CNVs[[which]]
+  object$CNAs[[which]]
 }
 
 
-#' Get names of CNV variables
+#' Get names of CNA variables
 #' @param object object
 #' @param ... other arguments
 #' @export
-get_CNVs_var_names <- function(object, ...) {
-  UseMethod("get_CNVs_var_names")
+get_CNAs_var_names <- function(object, ...) {
+  UseMethod("get_CNAs_var_names")
 }
 
-#' @describeIn get_CNVs_var_names Get CNV variable names from cevodata object
-#' @param which CNV assay to use
+#' @describeIn get_CNAs_var_names Get CNA variable names from cevodata object
+#' @param which CNA assay to use
 #' @export
-get_CNVs_var_names.cevodata <- function(object, which = default_CNVs(object), ...) {
-  cnvs_metadata <- CNVs(object, which = which) |>
+get_CNAs_var_names.cevodata <- function(object, which = default_CNAs(object), ...) {
+  cnas_metadata <- CNAs(object, which = which) |>
     select(-"sample_id", -"chrom", -"start", -"end") |>
     drop_na_columns()
-  colnames(cnvs_metadata)
+  colnames(cnas_metadata)
 }
 
 

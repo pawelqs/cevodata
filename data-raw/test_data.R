@@ -1,7 +1,7 @@
 
 ## --------------------------------- Data ------------------------------------
 
-data("test_data", package = "cevoDatasets")
+data("test_data", package = "cevodatasets")
 test_data
 
 sample_data <- test_data$metadata |>
@@ -16,7 +16,7 @@ snvs <- snvs |>
     VAF = if_else(sample_id == "Sample 2", alt_reads / (ref_reads + alt_reads), VAF)
   )
 
-cnvs <- tribble(
+cnas <- tribble(
   ~sample_id,  ~chrom, ~start, ~end,  ~total_cn, ~major_cn, ~minor_cn, ~normal_cn,
    "Sample 1",  "chr1", 1,      4000,  2,         1,         0,         2,
    "Sample 1",  "chr2", 1,      4000,  1,         1,         0,         2,
@@ -32,7 +32,7 @@ cnvs <- tribble(
 
 test_data <- init_cevodata(name = "test_data") |>
   add_SNV_data(snvs) |>
-  add_CNV_data(cnvs) |>
+  add_CNA_data(cnas) |>
   add_sample_data(sample_data)
 
 use_data(test_data, overwrite = TRUE)

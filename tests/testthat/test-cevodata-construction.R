@@ -1,6 +1,6 @@
 data("tcga_brca_test")
 snvs <- SNVs(tcga_brca_test)
-cnvs <- CNVs(tcga_brca_test)
+cnas <- CNAs(tcga_brca_test)
 meta <- tcga_brca_test$metadata
 
 
@@ -49,7 +49,7 @@ test_that("Adding SNVs to cevodata extends metadata", {
 
 
 test_that("Adding incorrect SNV to cevodata throws error", {
-  expect_error(init_cevodata("TCGA BRCA small", snvs = cnvs))
+  expect_error(init_cevodata("TCGA BRCA small", snvs = cnas))
 })
 
 
@@ -81,66 +81,66 @@ test_that("Setting active SNV assay on cevodata works", {
 })
 
 
-test_that("Adding CNVs to cevodata works", {
+test_that("Adding CNAs to cevodata works", {
   cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
-    add_CNV_data(cnvs, "tcga")
+    add_CNA_data(cnas, "tcga")
   expect_s3_class(cd, "cevodata")
-  expect_equal(length(cd$CNVs), 1)
-  expect_s3_class(cd$CNVs[[1]], "tbl_df")
-  expect_equal(cd$active_CNVs, "tcga")
+  expect_equal(length(cd$CNAs), 1)
+  expect_s3_class(cd$CNAs[[1]], "tbl_df")
+  expect_equal(cd$active_CNAs, "tcga")
 })
 
 
-test_that("Adding CNVs to cevodata extends metadata", {
-  small_cnvs <- cnvs |>
+test_that("Adding CNAs to cevodata extends metadata", {
+  small_cnas <- cnas |>
     filter(sample_id %in% c("TCGA-AC-A23H-01", "TCGA-AN-A046-01"))
-  cd <- init_cevodata("TCGA BRCA small", cnvs = small_cnvs)
+  cd <- init_cevodata("TCGA BRCA small", cnas = small_cnas)
   expect_equal(cd$metadata$sample_id, c("TCGA-AC-A23H-01", "TCGA-AN-A046-01"))
-  cd <- add_CNV_data(cd, cnvs = cnvs, "head")
+  cd <- add_CNA_data(cd, cnas = cnas, "head")
   expect_equal(nrow(cd$metadata), 4)
 })
 
 
-test_that("Adding incorrect CNV to cevodata throws error", {
-  expect_error(init_cevodata("TCGA BRCA small", cnvs = snvs))
+test_that("Adding incorrect CNA to cevodata throws error", {
+  expect_error(init_cevodata("TCGA BRCA small", cnas = snvs))
 })
 
 
-test_that("Getting CNV from cevodata works", {
-  cnvs2 <- head(cnvs)
-  cd <- init_cevodata("TCGA BRCA small", cnvs = cnvs) |>
-    add_CNV_data(cnvs2, "tcga2")
-  expect_identical(CNVs(cd), cnvs2)
-  expect_equal(CNVs(cd) |> nrow(), 6)
-  expect_identical(CNVs(cd, "tcga2"), cnvs2)
-  expect_identical(CNVs(cd, "cnvs"), cnvs)
-  expect_equal(CNVs(cd, "cnvs") |> nrow(), 714)
-  expect_error(CNVs(cd, "xxx"))
+test_that("Getting CNA from cevodata works", {
+  cnas2 <- head(cnas)
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas2, "tcga2")
+  expect_identical(CNAs(cd), cnas2)
+  expect_equal(CNAs(cd) |> nrow(), 6)
+  expect_identical(CNAs(cd, "tcga2"), cnas2)
+  expect_identical(CNAs(cd, "cnas"), cnas)
+  expect_equal(CNAs(cd, "cnas") |> nrow(), 714)
+  expect_error(CNAs(cd, "xxx"))
 })
 
 
-test_that("Getting active CNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", cnvs = cnvs) |>
-    add_CNV_data(cnvs = cnvs, "tcga")
-  expect_equal(default_CNVs(cd), "tcga")
-})
-
-
-test_that("Setting active SNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", cnvs = cnvs) |>
-    add_CNV_data(cnvs = cnvs, "tcga2")
-  default_CNVs(cd) <- "cnvs"
-  expect_equal(default_CNVs(cd), "cnvs")
-  expect_error(default_CNVs(cd) <- "xxx")
+test_that("Getting active CNA assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga")
+  expect_equal(default_CNAs(cd), "tcga")
 })
 
 
 test_that("Setting active SNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", cnvs = cnvs) |>
-    add_CNV_data(cnvs = cnvs, "tcga2")
-  default_CNVs(cd) <- "cnvs"
-  expect_equal(default_CNVs(cd), "cnvs")
-  expect_error(default_CNVs(cd) <- "xxx")
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga2")
+  default_CNAs(cd) <- "cnas"
+  expect_equal(default_CNAs(cd), "cnas")
+  expect_error(default_CNAs(cd) <- "xxx")
+})
+
+
+test_that("Setting active SNV assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga2")
+  default_CNAs(cd) <- "cnas"
+  expect_equal(default_CNAs(cd), "cnas")
+  expect_error(default_CNAs(cd) <- "xxx")
 })
 
 

@@ -9,9 +9,9 @@ print.cevodata <- function(x, ...) {
   } else {
     "None"
   }
-  CNV_assays_str <- if (length(summ$CNV_assays) > 0) {
-    summ$CNV_assays[summ$CNV_assays == summ$active_CNVs] <- paste0(summ$active_CNVs, " (default)")
-    summ$CNV_assays |>
+  CNA_assays_str <- if (length(summ$CNA_assays) > 0) {
+    summ$CNA_assays[summ$CNA_assays == summ$active_CNAs] <- paste0(summ$active_CNAs, " (default)")
+    summ$CNA_assays |>
       str_c(collapse = ", ")
   } else {
     "None"
@@ -20,7 +20,7 @@ print.cevodata <- function(x, ...) {
   cli::cat_line("<cevodata> dataset: ", x$name, col = "#45681e")
   cli::cat_line("Genome: ", summ$genome, col = "#628f2f")
   cli::cat_line("SNV assays: ", SNV_assays_str)
-  cli::cat_line("CNV assays: ", CNV_assays_str)
+  cli::cat_line("CNA assays: ", CNA_assays_str)
   cli::cat_line(summ$metadata_str)
   cli::cat_line(summ$SNVs_str)
   cli::cat_line("Active models: ", x$active_models)
@@ -35,8 +35,8 @@ summary.cevodata <- function(object, ...) {
     genome = object$genome,
     SNV_assays = names(object$SNVs),
     active_SNVs = object$active_SNVs,
-    CNV_assays = names(object$CNVs),
-    active_CNVs = object$active_CNVs
+    CNA_assays = names(object$CNAs),
+    active_CNAs = object$active_CNAs
   )
   summ <- c(
     summ,

@@ -42,10 +42,10 @@ snvs <- mutations %>%
 
 # usethis::use_data(snvs_tcga_brca, overwrite = TRUE)
 
-## -------------------------------- CNVs --------------------------------------
+## -------------------------------- CNAs --------------------------------------
 
 cna_hg19 <- read_tsv("/mnt/dane/data/cbioportal/brca_tcga_pan_can_atlas_2018/data_cna_hg19.seg")
-cnvs <- cna_hg19 |>
+cnas <- cna_hg19 |>
   transmute(
     sample_id = ID,
     chrom = str_c("chr", chrom),
@@ -93,7 +93,7 @@ TMB |>
 
 tcga_brca <- init_cevodata("TCGA-BRCA data", genome = "hg37") |>
   add_SNV_data(snvs, name = "TCGA") |>
-  add_CNV_data(cnvs, name = "TCGA") |>
+  add_CNA_data(cnas, name = "TCGA") |>
   add_sample_data(samples_data) |>
   add_sample_data(TMB) |>
   add_patient_data(clinical) |>

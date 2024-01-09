@@ -6,7 +6,7 @@ dplyr::filter
 #'
 #' This is a wrapper around dplyr::filter function which can be used to subset
 #' cevodata object. Works like dplyr::filter, performs the filtering on metadata,
-#' then filters SNVs, CNVs, clones and models keeping samples kept in metadata
+#' then filters SNVs, CNAs, clones and models keeping samples kept in metadata
 #'
 #' @param .data cevodata object
 #' @param ... expression passed to dplyr::filter(...)
@@ -20,7 +20,7 @@ filter.cevodata <- function(.data, ..., .preserve = FALSE) {
   patient_ids <- unique(new_object$metadata[["patient_id"]])
 
   new_object$SNVs   <- map(new_object$SNVs,   ~filter(.x, sample_id %in% ids))
-  new_object$CNVs   <- map(new_object$CNVs,   ~filter(.x, sample_id %in% ids))
+  new_object$CNAs   <- map(new_object$CNAs,   ~filter(.x, sample_id %in% ids))
   new_object$models <- map(new_object$models, ~filter(.x, sample_id %in% ids))
   new_object$misc   <- map(new_object$misc,   ~filter(.x, sample_id %in% ids))
   new_object$misc_by_sample  <- map(new_object$misc_by_sample,  ~.x[ids])
@@ -73,7 +73,7 @@ merge.cevodata <- function(x, y, name = "Merged datasets", verbose = TRUE, .id =
     add_sample_data(metadata)
 
   cd$SNVs <- bind_assays(x, y, "SNVs")
-  cd$CNVs <- bind_assays(x, y, "CNVs")
+  cd$CNAs <- bind_assays(x, y, "CNAs")
   cd$models <- bind_assays(x, y, "models")
   cd$misc <- bind_assays(x, y, "misc")
   cd$misc_by_sample <- map2(x$misc_by_sample, y$misc_by_sample, ~union(.x, .y))
@@ -81,13 +81,13 @@ merge.cevodata <- function(x, y, name = "Merged datasets", verbose = TRUE, .id =
 
   if (verbose) {
     message("Setting active SNVs to ", x$active_SNV)
-    message("Setting active CNVs to ", x$active_CNV)
+    message("Setting active CNAs to ", x$active_CNA)
   }
   cd$active_SNVs <- NULL
-  cd$active_CNVs <- NULL
+  cd$active_CNAs <- NULL
   active_assays <- list(
     active_SNVs = x$active_SNVs,
-    active_CNVs = x$active_CNVs
+    active_CNAs = x$active_CNAs
   )
   cd <- c(cd, active_assays)
   structure(cd, class = "cevodata")
