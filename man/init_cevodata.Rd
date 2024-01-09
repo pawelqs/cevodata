@@ -22,10 +22,6 @@ init_cevodata(
 \item{cnas}{tibble with CNAs}
 
 \item{cnas_name}{name for CNAs assay}
-
-\item{genome}{genome version}
-
-\item{cancer}{cancer type from \code{driver_genes} tbl}
 }
 \value{
 \code{cevodata} object
