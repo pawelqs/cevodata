@@ -4,7 +4,7 @@
 \alias{unite_mutation_id}
 \title{Unite many columns to create mutation_id column}
 \usage{
-unite_mutation_id(snvs, sep = "-", remove = TRUE)
+unite_mutation_id(snvs, sep = "-", include_gene_symbol = FALSE, remove = TRUE)
 }
 \arguments{
 \item{snvs}{SNVs}
