@@ -1,37 +1,5 @@
 
-# --------------------------- cevodata functions ------------------------------
-
-#' Add metadata to the cevodata object
-#' @param object object
-#' @param data name of new default assay
-add_metadata <- function(object, data) {
-  id_cols <- c("patient_id", "sample_id")
-  if (!any(id_cols %in% colnames(data))) {
-    stop("Metadata must have patient_id or sample_id column!")
-  }
-
-  if (is.null(object$metadata)) {
-    object$metadata <- data
-  } else {
-    meta <- get_metadata(object)
-    keys <- intersect(colnames(meta), colnames(data))
-    meta <- full_join(meta, data, by = keys)
-  }
-
-  object$metadata <- meta |>
-    select(any_of(id_cols), everything())
-
-  object
-}
-
-
-#' Get sample metadata
-#' @param cd cevodata object
-#' @export
-get_metadata <- function(cd) {
-  cd$metadata
-}
-
+# --------------------- More metadata-related functions ------------------------
 
 #' Choose purity measure
 #'
@@ -59,8 +27,6 @@ use_purity <- function(cd, name, verbose = verbose::verbose("cevoverse")) {
   }
 }
 
-
-# ---------------------------------- Other -----------------------------------
 
 get_purities <- function(cd) {
   cd$metadata |>

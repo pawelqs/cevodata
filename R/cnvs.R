@@ -1,40 +1,16 @@
 
-# --------------------------- cevodata functions ------------------------------
+# ----------------------- Other CNV-related functions --------------------------
 
-#' @describeIn assays Add new CNAs to cevodata
+#' @describeIn get_CNAs_var_names Get CNA variable names from cevodata object
+#' @param which CNA assay to use
 #' @export
-add_CNA_data <- function(object, cnas, name = NULL) {
-  if (is.null(name)) {
-    n <- length(object$CNAs)
-    name <- if (n == 0) "cnas" else str_c("cnas", n)
-  }
-  object$CNAs[[name]] <- validate_CNAs(cnas)
-  default_CNAs(object) <- name
-  meta <- tibble(sample_id = unique(cnas$sample_id))
-  object <- add_metadata(object, meta)
-  object
+get_CNAs_var_names <- function(object, which = default_CNAs(object), ...) {
+  cnas_metadata <- CNAs(object, which = which) |>
+    select(-"sample_id", -"chrom", -"start", -"end") |>
+    drop_na_columns()
+  colnames(cnas_metadata)
 }
 
-
-#' @describeIn active_assays Get default CNAs assay of cevodata
-#' @export
-default_CNAs <- function(object, ...) {
-  object$settings$active_CNAs
-}
-
-
-#' @describeIn active_assays Set default CNAs assay of cevodata
-#' @export
-`default_CNAs<-` <- function(object, ..., value) {
-  if (value %not in% names(object$CNAs)) {
-    stop("Chosen CNA assay must exist in object$CNAs")
-  }
-  object$settings$active_CNAs <- value
-  object
-}
-
-
-# --------------------------- Other functions --------------------------------
 
 validate_CNAs <- function(cnas) {
   require_columns(cnas, c("sample_id", "chrom", "start", "end"))
