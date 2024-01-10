@@ -1,3 +1,6 @@
+
+# --------------------------- cevodata construction ----------------------------
+
 data("tcga_brca_test")
 snvs <- SNVs(tcga_brca_test)
 cnas <- CNAs(tcga_brca_test)
@@ -25,6 +28,8 @@ test_that("init_cevodata with SNV assay works", {
 })
 
 
+# -------------------------------- Add data ------------------------------------
+
 test_that("Adding SNVs to cevodata works", {
   cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
     add_SNV_data(snvs = snvs, "head")
@@ -48,34 +53,6 @@ test_that("Adding SNVs to cevodata extends metadata", {
 
 test_that("Adding incorrect SNV to cevodata throws error", {
   expect_error(init_cevodata("TCGA BRCA small", snvs = cnas))
-})
-
-
-test_that("Getting SNV from cevodata works", {
-  tcga2 <- head(snvs)
-  cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
-    add_SNV_data(snvs = tcga2, "head")
-  expect_identical(SNVs(cd), tcga2)
-  expect_equal(SNVs(cd) |> nrow(), 6)
-  expect_identical(SNVs(cd, "head"), tcga2)
-  expect_equal(SNVs(cd, "snvs") |> nrow(), 21570)
-  expect_error(SNVs(cd, "xxx"))
-})
-
-
-test_that("Getting active SNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
-    add_SNV_data(snvs = snvs, "head")
-  expect_equal(default_SNVs(cd), "head")
-})
-
-
-test_that("Setting active SNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
-    add_SNV_data(snvs = snvs, "head")
-  default_SNVs(cd) <- "snvs"
-  expect_equal(default_SNVs(cd), "snvs")
-  expect_error(default_SNVs(cd) <- "xxx")
 })
 
 
@@ -104,44 +81,6 @@ test_that("Adding incorrect CNA to cevodata throws error", {
 })
 
 
-test_that("Getting CNA from cevodata works", {
-  cnas2 <- head(cnas)
-  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
-    add_CNA_data(cnas2, "tcga2")
-  expect_identical(CNAs(cd), cnas2)
-  expect_equal(CNAs(cd) |> nrow(), 6)
-  expect_identical(CNAs(cd, "tcga2"), cnas2)
-  expect_identical(CNAs(cd, "cnas"), cnas)
-  expect_equal(CNAs(cd, "cnas") |> nrow(), 714)
-  expect_error(CNAs(cd, "xxx"))
-})
-
-
-test_that("Getting active CNA assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
-    add_CNA_data(cnas = cnas, "tcga")
-  expect_equal(default_CNAs(cd), "tcga")
-})
-
-
-test_that("Setting active SNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
-    add_CNA_data(cnas = cnas, "tcga2")
-  default_CNAs(cd) <- "cnas"
-  expect_equal(default_CNAs(cd), "cnas")
-  expect_error(default_CNAs(cd) <- "xxx")
-})
-
-
-test_that("Setting active SNV assay on cevodata works", {
-  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
-    add_CNA_data(cnas = cnas, "tcga2")
-  default_CNAs(cd) <- "cnas"
-  expect_equal(default_CNAs(cd), "cnas")
-  expect_error(default_CNAs(cd) <- "xxx")
-})
-
-
 test_that("Adding sample data to cevodata works", {
   meta <- tibble(
     sample_id =  c("TCGA-AC-A23H-01", "TCGA-AN-A046-01"),
@@ -167,3 +106,80 @@ test_that("Adding sample data to cevodata works", {
   expect_true(all(unique(snvs$sample_id) %in% cd$metadata$sample_id))
   expect_equal(cd$metadata$meta1, c(1, 2, NA_real_, NA_real_))
 })
+
+
+# -------------------------------- Get data ------------------------------------
+
+test_that("Getting SNV from cevodata works", {
+  tcga2 <- head(snvs)
+  cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
+    add_SNV_data(snvs = tcga2, "head")
+  expect_identical(SNVs(cd), tcga2)
+  expect_equal(SNVs(cd) |> nrow(), 6)
+  expect_identical(SNVs(cd, "head"), tcga2)
+  expect_equal(SNVs(cd, "snvs") |> nrow(), 21570)
+  expect_error(SNVs(cd, "xxx"))
+})
+
+
+test_that("Getting active SNV assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
+    add_SNV_data(snvs = snvs, "head")
+  expect_equal(default_SNVs(cd), "head")
+})
+
+
+test_that("Getting CNA from cevodata works", {
+  cnas2 <- head(cnas)
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas2, "tcga2")
+  expect_identical(CNAs(cd), cnas2)
+  expect_equal(CNAs(cd) |> nrow(), 6)
+  expect_identical(CNAs(cd, "tcga2"), cnas2)
+  expect_identical(CNAs(cd, "cnas"), cnas)
+  expect_equal(CNAs(cd, "cnas") |> nrow(), 714)
+  expect_error(CNAs(cd, "xxx"))
+})
+
+
+test_that("Getting active CNA assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga")
+  expect_equal(default_CNAs(cd), "tcga")
+})
+
+
+# ------------------------------ Set settings ----------------------------------
+
+test_that("Setting active SNV assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", snvs = snvs) |>
+    add_SNV_data(snvs = snvs, "head")
+  default_SNVs(cd) <- "snvs"
+  expect_equal(default_SNVs(cd), "snvs")
+  expect_error(default_SNVs(cd) <- "xxx")
+})
+
+
+
+
+
+
+
+test_that("Setting active SNV assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga2")
+  default_CNAs(cd) <- "cnas"
+  expect_equal(default_CNAs(cd), "cnas")
+  expect_error(default_CNAs(cd) <- "xxx")
+})
+
+
+test_that("Setting active SNV assay on cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga2")
+  default_CNAs(cd) <- "cnas"
+  expect_equal(default_CNAs(cd), "cnas")
+  expect_error(default_CNAs(cd) <- "xxx")
+})
+
+
