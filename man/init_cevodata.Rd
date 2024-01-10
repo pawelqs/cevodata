@@ -5,7 +5,7 @@
 \title{Create new cevomod dataset object}
 \usage{
 init_cevodata(
-  name = "cevodata object",
+  name = "Unnamed dataset",
   snvs = NULL,
   snvs_name = NULL,
   cnas = NULL,

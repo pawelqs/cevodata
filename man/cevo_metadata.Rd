@@ -6,16 +6,14 @@
 \alias{add_sample_data}
 \title{Add metadata to the cevodata object}
 \usage{
-add_patient_data(object, data, ...)
+add_patient_data(object, data)
 
-add_sample_data(object, data, ...)
+add_sample_data(object, data)
 }
 \arguments{
 \item{object}{object}
 
 \item{data}{name of new default assay}
-
-\item{...}{other arguments}
 }
 \description{
 Add metadata to the cevodata object

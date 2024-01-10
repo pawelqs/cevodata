@@ -51,11 +51,11 @@ init_cevodata <- function(name = "Unnamed dataset",
 #' @param cnas tibble with CNAs
 #' @param name name for SNVs/CNAs assay
 #' @param which assay to use - uses active_SNVs if none
-#' @name assays
+#' @name data_assays
 NULL
 
 
-#' @describeIn assays Add new SNVs to cevodata
+#' @describeIn data_assays Add new SNVs to cevodata
 #' @export
 add_SNV_data <- function(object, snvs, name = NULL) {
   if(is.null(name)) {
@@ -74,7 +74,7 @@ add_SNV_data <- function(object, snvs, name = NULL) {
 }
 
 
-#' @describeIn assays Add new CNAs to cevodata
+#' @describeIn data_assays Add new CNAs to cevodata
 #' @export
 add_CNA_data <- function(object, cnas, name = NULL) {
   if(is.null(name)) {
