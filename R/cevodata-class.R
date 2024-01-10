@@ -50,15 +50,14 @@ init_cevodata <- function(name = "Unnamed dataset",
 #' @param snvs tibble with SNVs
 #' @param cnas tibble with CNAs
 #' @param name name for SNVs/CNAs assay
-#' @param which assay to use - uses active_SNVs if nonei
-#' @param ... other arguments
+#' @param which assay to use - uses active_SNVs if none
 #' @name assays
 NULL
 
 
 #' @describeIn assays Add new SNVs to cevodata
 #' @export
-add_SNV_data <- function(object, snvs, name = NULL, ...) {
+add_SNV_data <- function(object, snvs, name = NULL) {
   if(is.null(name)) {
     n <- length(object$SNVs)
     name <- if (n == 0) "snvs" else str_c("snvs", n)
@@ -77,7 +76,7 @@ add_SNV_data <- function(object, snvs, name = NULL, ...) {
 
 #' @describeIn assays Add new CNAs to cevodata
 #' @export
-add_CNA_data <- function(object, cnas, name = NULL, ...) {
+add_CNA_data <- function(object, cnas, name = NULL) {
   if(is.null(name)) {
     n <- length(object$CNAs)
     name <- if (n == 0) "cnas" else str_c("cnas", n)
@@ -92,17 +91,18 @@ add_CNA_data <- function(object, cnas, name = NULL, ...) {
   object <- add_sample_data(object, meta)
   object
 }
+
+
 #' Add metadata to the cevodata object
 #' @param object object
 #' @param data name of new default assay
-#' @param ... other arguments
 #' @name cevo_metadata
 NULL
 
 
 #' @describeIn cevo_metadata Add patient data to cevodata object
 #' @export
-add_patient_data <- function(object, data, ...) {
+add_patient_data <- function(object, data) {
   if ("patient_id" %not in% colnames(data)) {
     stop("Data must have patient_id column!")
   }
@@ -118,7 +118,7 @@ add_patient_data <- function(object, data, ...) {
 
 #' @describeIn cevo_metadata Add samples' data to cevodata object
 #' @export
-add_sample_data <- function(object, data, ...) {
+add_sample_data <- function(object, data) {
   if ("sample_id" %not in% colnames(data)) {
     stop("Data must have sample_id column!")
   }
@@ -138,18 +138,7 @@ add_sample_data <- function(object, data, ...) {
 }
 
 
-
-validate_CNAs <- function(cnas) {
-  required_cols <- c(
-    "sample_id", "chrom", "start", "end"
-    # "log_ratio", "BAF", "total_cn", "major_cn", "minor_cn"
-  )
-  missing_cols <- setdiff(required_cols, names(cnas))
-  if (length(missing_cols)) {
-    stop(str_c("cnas object is missing the following columns:", str_c(missing_cols, collapse = ", ")))
-  }
-}
-
+# -------------------------------- Defaults ------------------------------------
 
 #' Get/Set active assays of the cevodata object
 #' @param object object
@@ -157,8 +146,6 @@ validate_CNAs <- function(cnas) {
 #' @param ... other arguments
 #' @name active_assays
 NULL
-
-# -------------------------------- Defaults ------------------------------------
 
 
 #' @describeIn active_assays Get default SNVs assay of cevodata
