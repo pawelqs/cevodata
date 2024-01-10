@@ -25,5 +25,10 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    verbose
+Remotes:
+    pawelqs/verbose
 LazyData: true
+Depends: 
+    R (>= 2.10)

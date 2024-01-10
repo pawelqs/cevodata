@@ -14,5 +14,6 @@
 #' @importFrom rlang .data
 #' @importFrom rlang .env
 #' @importFrom tidyselect where
+#' @importFrom verbose verbose
 ## usethis namespace: end
 NULL

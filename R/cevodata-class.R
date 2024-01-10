@@ -164,7 +164,7 @@ default_CNAs <- function(object, ...) {
 #' @param name Name of the metadata column with chosen purity values
 #' @param verbose Verbose?
 #' @export
-use_purity <- function(cd, name, verbose = get_cevomod_verbosity()) {
+use_purity <- function(cd, name, verbose = verbose::verbose("cevoverse")) {
   if (name %not in% names(cd$metadata)) {
     stop(
       "`name` should be a name of the column in the metadata tibble, ",
