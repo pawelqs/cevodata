@@ -16,7 +16,7 @@ as_cevo_snvs <- function(snvs) {
     "ref", "alt", "ref_reads", "alt_reads", "impact", "VAF"
   )
   snvs |>
-    select(all_of(columns_to_order), everything()) |>
+    select(any_of(columns_to_order), everything()) |>
     new_cevo_snvs()
 }
 

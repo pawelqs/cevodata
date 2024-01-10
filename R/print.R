@@ -18,7 +18,6 @@ print.cevodata <- function(x, ...) {
   }
 
   cli::cat_line("<cevodata> dataset: ", x$name, col = "#45681e")
-  cli::cat_line("Genome: ", summ$genome, col = "#628f2f")
   cli::cat_line("SNV assays: ", SNV_assays_str)
   cli::cat_line("CNA assays: ", CNA_assays_str)
   cli::cat_line(summ$metadata_str)
@@ -32,11 +31,10 @@ print.cevodata <- function(x, ...) {
 summary.cevodata <- function(object, ...) {
   summ <- list(
     name = object$name,
-    genome = object$genome,
     SNV_assays = names(object$SNVs),
-    active_SNVs = object$active_SNVs,
+    active_SNVs = object$settings$active_SNVs,
     CNA_assays = names(object$CNAs),
-    active_CNAs = object$active_CNAs
+    active_CNAs = object$settings$active_CNAs
   )
   summ <- c(
     summ,
@@ -92,7 +90,7 @@ stringify_number_of_samples <- function(min, max) {
 
 
 summarize_SNVs <- function(object) {
-  snvs_added <- object$active_SNVs != ""
+  snvs_added <- length(object$SNVs) > 0
   patient_id_present <- !is.null(object$metadata[["patient_id"]])
 
   summ <- list()

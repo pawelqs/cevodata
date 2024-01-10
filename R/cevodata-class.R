@@ -65,7 +65,7 @@ add_SNV_data <- function(object, snvs, name = NULL) {
   object$SNVs[[name]] <- as_cevo_snvs(snvs)
   default_SNVs(object) <- name
   meta <- tibble(sample_id = unique(snvs$sample_id))
-  object <- add_sample_data(object, meta)
+  object <- add_metadata(object, meta)
   object
 }
 
@@ -80,7 +80,7 @@ add_CNA_data <- function(object, cnas, name = NULL) {
   object$CNAs[[name]] <- validate_CNAs(cnas)
   default_CNAs(object) <- name
   meta <- tibble(sample_id = unique(cnas$sample_id))
-  object <- add_sample_data(object, meta)
+  object <- add_metadata(object, meta)
   object
 }
 
@@ -102,7 +102,7 @@ add_metadata <- function(object, data) {
   }
 
   object$metadata <- object$metadata |>
-    select(all_of(id_cols), everything())
+    select(any_of(id_cols), everything())
 
   object
 }

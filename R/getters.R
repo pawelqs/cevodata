@@ -11,7 +11,7 @@ SNVs <- function(object, ...) {
 #' @return tibble
 #' @describeIn assays Get SNVs from cevodata dataset
 #' @export
-SNVs.cevodata <- function(object, which = object$active_SNVs, ...) {
+SNVs.cevodata <- function(object, which = default_SNVs(object), ...) {
   if (which %not in% names(object$SNVs)) {
     stop(str_c(which, " does not exist in object$SNVs"))
   }
@@ -161,7 +161,7 @@ CNAs <- function(object, ...) {
 
 #' @describeIn assays Get CNAs from cevodata dataset
 #' @export
-CNAs.cevodata <- function(object, which = object$active_CNAs, ...) {
+CNAs.cevodata <- function(object, which = default_CNAs(object), ...) {
   if (which %not in% names(object$CNAs)) {
     stop(str_c(which, " does not exist in object$CNAs"))
   }
@@ -213,10 +213,10 @@ get_sample_ids <- function(cd) {
 }
 
 
-get_patient_sex <- function(cd) {
-  cd$metadata |>
-    select("sample_id", "sex")
-}
+# get_patient_sex <- function(cd) {
+#   cd$metadata |>
+#     select("sample_id", "sex")
+# }
 
 
 #' Get sample metadata

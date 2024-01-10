@@ -18,8 +18,10 @@ validate_CNAs <- function(cnas) {
 #' @export
 annotate_normal_cn <- function(object, which_cnas = default_CNAs(object)) {
   msg("Assuming human genome")
+  sex <- get_metadata(object) |>
+    select("sample_id", "sex")
   cnas <- CNAs(object, which_cnas) |>
-    left_join(get_patient_sex(object), by = "sample_id") |>
+    left_join(sex, by = "sample_id") |>
     mutate(
       normal_cn = if_else(
         .data$sex %in% c("male", "M") & .data$chrom %in% c("chrX", "chrY"), 1, 2
