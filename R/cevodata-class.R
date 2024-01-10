@@ -95,7 +95,7 @@ add_metadata <- function(object, data) {
   }
 
   if (is.null(object$metadata)) {
-    object$metadata <- data
+    meta <- data
   } else {
     meta <- get_metadata(object)
     keys <- intersect(colnames(meta), colnames(data))
