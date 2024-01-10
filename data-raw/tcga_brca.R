@@ -92,9 +92,9 @@ TMB |>
 tcga_brca <- init_cevodata("TCGA-BRCA data") |>
   add_SNV_data(snvs, name = "TCGA") |>
   add_CNA_data(cnas, name = "TCGA") |>
-  add_sample_data(samples_data) |>
-  add_sample_data(TMB) |>
-  add_patient_data(clinical) |>
+  add_metadata(samples_data) |>
+  add_metadata(TMB) |>
+  add_metadata(clinical) |>
   filter(TMB > 200)
 
 top_mutated_patients <- TMB %>%

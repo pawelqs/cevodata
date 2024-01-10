@@ -2,7 +2,7 @@
 ## --------------------------------- Data ------------------------------------
 
 data("test_data", package = "cevodatasets")
-test_data
+test_data <- update_cevodata_v2_to_v3(test_data)
 
 sample_data <- test_data$metadata |>
   mutate(purity = c(1, 0.7, 1, 1))
@@ -33,6 +33,6 @@ cnas <- tribble(
 test_data <- init_cevodata(name = "test_data") |>
   add_SNV_data(snvs) |>
   add_CNA_data(cnas) |>
-  add_sample_data(sample_data)
+  add_metadata(sample_data)
 
 use_data(test_data, overwrite = TRUE)
