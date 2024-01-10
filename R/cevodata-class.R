@@ -29,7 +29,7 @@ new_cevodata <- function(name) {
 #' @return `cevodata` object
 #'
 #' @export
-init_cevodata <- function(name = "cevodata object",
+init_cevodata <- function(name = "Unnamed dataset",
                           snvs = NULL, snvs_name = NULL,
                           cnas = NULL, cnas_name = NULL) {
   cd <- new_cevodata(name)
