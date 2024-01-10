@@ -1,13 +1,7 @@
 
 validate_CNAs <- function(cnas) {
-  required_cols <- c(
-    "sample_id", "chrom", "start", "end"
-    # "log_ratio", "BAF", "total_cn", "major_cn", "minor_cn"
-  )
-  missing_cols <- setdiff(required_cols, names(cnas))
-  if (length(missing_cols)) {
-    stop(str_c("cnas object is missing the following columns:", str_c(missing_cols, collapse = ", ")))
-  }
+  require_columns(cnas, c("sample_id", "chrom", "start", "end"))
+  cnas
 }
 
 

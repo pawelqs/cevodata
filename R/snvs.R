@@ -10,42 +10,52 @@ new_cevo_snvs <- function(tbl) {
 #' @param snvs tibble
 #' @export
 as_cevo_snvs <- function(snvs) {
-  required_cols <- c("sample_id", "chrom", "pos", "VAF")
-  optional_cols <- c("gene_symbol", "ref", "alt", "ref_reads", "alt_reads", "impact")
-
-  missing_required_cols <- setdiff(required_cols, names(snvs))
-  if (length(missing_required_cols)) {
-    stop(str_c("input snvs is missing the following columns:", str_c(missing_required_cols, collapse = ", ")))
-  }
-
-  missing_optional_cols <- setdiff(optional_cols, names(snvs))
-  optional_col_types <- list(
-    gene_symbol = NA_character_, ref = NA_character_, alt = NA_character_,
-    ref_reads = NA_real_, alt_reads = NA_real_, impact = NA_character_
+  validate_SNVs(snvs)
+  columns_to_order <- c(
+    "sample_id", "chrom", "pos", "gene_symbol",
+    "ref", "alt", "ref_reads", "alt_reads", "impact", "VAF"
   )
-  for (col in missing_optional_cols) {
-    snvs[[col]] <- optional_col_types[[col]]
-  }
-
   snvs |>
-    select(
-      "sample_id", "chrom", "pos", "gene_symbol",
-      "ref", "alt", "ref_reads", "alt_reads", "impact", "VAF",
-      everything()
-    ) |>
+    select(all_of(columns_to_order), everything()) |>
     new_cevo_snvs()
 }
 
 
 
 validate_SNVs <- function(snvs) {
-  required_cols <- c(
-    "sample_id", "chrom", "pos", "gene_symbol",
-    "ref", "alt", "ref_reads", "alt_reads", "VAF", "impact"
+  # snvs is not empty
+  if (length(snvs) == 0) {
+    stop("snvs cannot be empty tibble")
+  }
+
+  # snvs contains sample_id and required mutation columns
+  required_cols <- list(
+    option1 = c("sample_id", "chrom", "pos", "alt", "ref"),
+    option2 = c("sample_id", "mutation_id")
   )
-  missing_cols <- setdiff(required_cols, names(snvs))
-  if (length(missing_cols)) {
-    stop(str_c("snvs object is missing the following columns:", str_c(missing_cols, collapse = ", ")))
+  pass <- map_lgl(required_cols, ~all(.x %in% names(snvs)))
+  if (!any(pass)) {
+    stop(
+      "snvs must contain either: \n",
+      required_cols |>
+        map_chr(str_c, collapse = ", ") |>
+        str_c(collapse = "\nor\n")
+    )
+  }
+
+  # snvs contains VAF or read counts
+  required_cols_2 <- list(
+    option1 = c("alt_reads", "ref_reads"),
+    option2 = c("VAF")
+  )
+  pass <- map_lgl(required_cols_2, ~all(.x %in% names(snvs)))
+  if (!any(pass)) {
+    stop(
+      "snvs must contain either: \n",
+      required_cols_2 |>
+        map_chr(str_c, collapse = ", ") |>
+        str_c(collapse = "\nor\n")
+    )
   }
 }
 
@@ -57,8 +67,13 @@ validate_SNVs <- function(snvs) {
 #' @param sep Separator
 #' @param remove Remove united columns?
 #' @export
-unite_mutation_id <- function(snvs, sep = "-", remove = TRUE) {
-  unite(snvs, "mutation_id", "chrom":"alt", sep = sep, remove = remove)
+unite_mutation_id <- function(snvs, sep = "-", include_gene_sumbol = FALSE, remove = TRUE) {
+  cols <- if (include_gene_sumbol) {
+    c("chrom", "pos", "ref", "alt")
+  } else {
+    c("chrom", "pos", "gene_symbol", "ref", "alt")
+  }
+  unite(snvs, "mutation_id", all_of(cols), sep = sep, remove = remove)
 }
 
 
