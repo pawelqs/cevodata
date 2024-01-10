@@ -4,7 +4,7 @@
 \alias{use_purity}
 \title{Choose purity measure}
 \usage{
-use_purity(cd, name, verbose = get_cevomod_verbosity())
+use_purity(cd, name, verbose = verbose::verbose("cevoverse"))
 }
 \arguments{
 \item{cd}{\if{html}{\out{<cevodata>}} object}

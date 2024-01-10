@@ -17,13 +17,13 @@ add_CNA_data(object, cnas, name = NULL)
 
 SNVs(object, ...)
 
-\method{SNVs}{cevodata}(object, which = object$active_SNVs, ...)
+\method{SNVs}{cevodata}(object, which = default_SNVs(object), ...)
 
 get_SNVs_wider(object, fill_na = NULL)
 
 CNAs(object, ...)
 
-\method{CNAs}{cevodata}(object, which = object$active_CNAs, ...)
+\method{CNAs}{cevodata}(object, which = default_CNAs(object), ...)
 }
 \arguments{
 \item{object}{cevodata object}
