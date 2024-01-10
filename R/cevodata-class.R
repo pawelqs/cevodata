@@ -51,6 +51,7 @@ init_cevodata <- function(name = "Unnamed dataset",
 #' @param cnas tibble with CNAs
 #' @param name name for SNVs/CNAs assay
 #' @param which assay to use - uses active_SNVs if none
+#' @param ... other arguments
 #' @name assays
 NULL
 

@@ -63,14 +63,13 @@ filter_joined_models <- function(joined_models, ...) {
 #' @param .id datasets names will be saved to this metadata column, if provided
 #' @export
 merge.cevodata <- function(x, y, name = "Merged datasets", verbose = TRUE, .id = NULL, ...) {
-  genome <- if (x$genome == y$genome) x$genome else "multiple genomes"
   if (!is.null(.id)) {
     x$metadata[[.id]] <- x$name
     y$metadata[[.id]] <- y$name
   }
   metadata <- bind_rows(x$metadata, y$metadata)
-  cd <- init_cevodata(name = name, genome = genome) |>
-    add_sample_data(metadata)
+  cd <- init_cevodata(name = name) |>
+    add_metadata(metadata)
 
   cd$SNVs <- bind_assays(x, y, "SNVs")
   cd$CNAs <- bind_assays(x, y, "CNAs")

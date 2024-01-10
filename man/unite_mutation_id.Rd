@@ -11,6 +11,8 @@ unite_mutation_id(snvs, sep = "-", include_gene_symbol = FALSE, remove = TRUE)
 
 \item{sep}{Separator}
 
+\item{include_gene_symbol}{Include gene symbol in mutation_id?}
+
 \item{remove}{Remove united columns?}
 }
 \description{

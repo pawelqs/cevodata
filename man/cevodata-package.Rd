@@ -4,7 +4,7 @@
 \name{cevodata-package}
 \alias{cevodata}
 \alias{cevodata-package}
-\title{cevodata: Class for storing cancer DNAseq data.}
+\title{cevodata: Class for storing cancer DNAseq data}
 \description{
 cevodata provides a <cevodata> class, an R class for storing the DNA sequencing data for many patients and many tumor samples in a signle object, and methods to manipulate it.
 }
