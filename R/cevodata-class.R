@@ -45,46 +45,6 @@ init_cevodata <- function(name = "Unnamed dataset",
 
 # --------------------------------- Add data -----------------------------------
 
-#' Get/Add SNV/CNA data from the cevodata dataset
-#' @param object object
-#' @param snvs tibble with SNVs
-#' @param cnas tibble with CNAs
-#' @param name name for SNVs/CNAs assay
-#' @param which assay to use - uses active_SNVs if none
-#' @name assays
-NULL
-
-
-#' @describeIn assays Add new SNVs to cevodata
-#' @export
-add_SNV_data <- function(object, snvs, name = NULL) {
-  if (is.null(name)) {
-    n <- length(object$SNVs)
-    name <- if (n == 0) "snvs" else str_c("snvs", n)
-  }
-  object$SNVs[[name]] <- as_cevo_snvs(snvs)
-  default_SNVs(object) <- name
-  meta <- tibble(sample_id = unique(snvs$sample_id))
-  object <- add_metadata(object, meta)
-  object
-}
-
-
-#' @describeIn assays Add new CNAs to cevodata
-#' @export
-add_CNA_data <- function(object, cnas, name = NULL) {
-  if (is.null(name)) {
-    n <- length(object$CNAs)
-    name <- if (n == 0) "cnas" else str_c("cnas", n)
-  }
-  object$CNAs[[name]] <- validate_CNAs(cnas)
-  default_CNAs(object) <- name
-  meta <- tibble(sample_id = unique(cnas$sample_id))
-  object <- add_metadata(object, meta)
-  object
-}
-
-
 #' Add metadata to the cevodata object
 #' @param object object
 #' @param data name of new default assay
@@ -105,52 +65,6 @@ add_metadata <- function(object, data) {
   object$metadata <- meta |>
     select(any_of(id_cols), everything())
 
-  object
-}
-
-
-# -------------------------------- Defaults ------------------------------------
-
-#' Get/Set active assays of the cevodata object
-#' @param object object
-#' @param value name of new default assay
-#' @param ... other arguments
-#' @name active_assays
-NULL
-
-
-#' @describeIn active_assays Get default SNVs assay of cevodata
-#' @export
-default_SNVs <- function(object, ...) {
-  object$settings$active_SNVs
-}
-
-
-#' @describeIn active_assays Set default SNVs assay of cevodata
-#' @export
-`default_SNVs<-` <- function(object, ..., value) {
-  if (value %not in% names(object$SNVs)) {
-    stop("Chosen SNV assay must exist in object$SNVs")
-  }
-  object$settings$active_SNVs <- value
-  object
-}
-
-
-#' @describeIn active_assays Get default CNAs assay of cevodata
-#' @export
-default_CNAs <- function(object, ...) {
-  object$settings$active_CNAs
-}
-
-
-#' @describeIn active_assays Set default CNAs assay of cevodata
-#' @export
-`default_CNAs<-` <- function(object, ..., value) {
-  if (value %not in% names(object$CNAs)) {
-    stop("Chosen CNA assay must exist in object$CNAs")
-  }
-  object$settings$active_CNAs <- value
   object
 }
 

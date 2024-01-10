@@ -1,5 +1,58 @@
 
-## --------------------------- cevo_snvs class --------------------------------
+# --------------------------- cevodata functions ------------------------------
+
+#' Get/Add SNV/CNA data from the cevodata dataset
+#' @param object object
+#' @param snvs tibble with SNVs
+#' @param cnas tibble with CNAs
+#' @param name name for SNVs/CNAs assay
+#' @param which assay to use - uses active_SNVs if none
+#' @name assays
+NULL
+
+
+#' @describeIn assays Add new SNVs to cevodata
+#' @export
+add_SNV_data <- function(object, snvs, name = NULL) {
+  if (is.null(name)) {
+    n <- length(object$SNVs)
+    name <- if (n == 0) "snvs" else str_c("snvs", n)
+  }
+  object$SNVs[[name]] <- as_cevo_snvs(snvs)
+  default_SNVs(object) <- name
+  meta <- tibble(sample_id = unique(snvs$sample_id))
+  object <- add_metadata(object, meta)
+  object
+}
+
+
+#' Get/Set active assays of the cevodata object
+#' @param object object
+#' @param value name of new default assay
+#' @param ... other arguments
+#' @name active_assays
+NULL
+
+
+#' @describeIn active_assays Get default SNVs assay of cevodata
+#' @export
+default_SNVs <- function(object, ...) {
+  object$settings$active_SNVs
+}
+
+
+#' @describeIn active_assays Set default SNVs assay of cevodata
+#' @export
+`default_SNVs<-` <- function(object, ..., value) {
+  if (value %not in% names(object$SNVs)) {
+    stop("Chosen SNV assay must exist in object$SNVs")
+  }
+  object$settings$active_SNVs <- value
+  object
+}
+
+
+# --------------------------- cevo_snvs class --------------------------------
 
 new_cevo_snvs <- function(tbl) {
   structure(tbl, class = c("cevo_snvs", class(tibble::tibble())))
@@ -19,7 +72,6 @@ as_cevo_snvs <- function(snvs) {
     select(any_of(columns_to_order), everything()) |>
     new_cevo_snvs()
 }
-
 
 
 validate_SNVs <- function(snvs) {
@@ -60,7 +112,7 @@ validate_SNVs <- function(snvs) {
 }
 
 
-## ---------------------------- Misc functions --------------------------------
+# ---------------------------- Misc functions --------------------------------
 
 #' Unite many columns to create mutation_id column
 #' @param snvs SNVs
