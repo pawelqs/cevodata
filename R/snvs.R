@@ -67,12 +67,8 @@ validate_SNVs <- function(snvs) {
 #' @param sep Separator
 #' @param remove Remove united columns?
 #' @export
-unite_mutation_id <- function(snvs, sep = "-", include_gene_sumbol = FALSE, remove = TRUE) {
-  cols <- if (include_gene_sumbol) {
-    c("chrom", "pos", "ref", "alt")
-  } else {
-    c("chrom", "pos", "gene_symbol", "ref", "alt")
-  }
+unite_mutation_id <- function(snvs, sep = "-", include_gene_symbol = FALSE, remove = TRUE) {
+  cols <- c("chrom", "pos", if (include_gene_symbol) "gene_symbol" else NULL, "ref", "alt")
   unite(snvs, "mutation_id", all_of(cols), sep = sep, remove = remove)
 }
 
