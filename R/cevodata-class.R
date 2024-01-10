@@ -183,6 +183,23 @@ use_purity <- function(cd, name, verbose = verbose::verbose("cevoverse")) {
 
 # --------------------------------- Misc ---------------------------------------
 
+#' Update to cevodata to v3
+#' @param cd <cevodata> object
+#' @export
+update_cevodata_v2_to_v3 <- function(cd) {
+  new <- init_cevodata(cd$name)
+  new$metadata <- cd$metadata
+  new$SNVs <- cd$SNVs
+  new$CNAs <- cd$CNVs
+  new$settings <- list(
+    active_SNVs = cd$active_SNVs,
+    active_CNAs = cd$active_CNAs,
+    active_models = cd$active_models
+  )
+  new
+}
+
+
 is_cevodata_singlepatient <- function(object) {
   n_patients <- count_patients(object)
   if (is.na(n_patients)) {
