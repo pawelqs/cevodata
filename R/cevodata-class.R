@@ -97,11 +97,12 @@ add_metadata <- function(object, data) {
   if (is.null(object$metadata)) {
     object$metadata <- data
   } else {
-    keys <- intersect(id_cols, colnames(data))
-    object$metadata <- full_join(object$metadata, data, by = keys)
+    meta <- get_metadata(object)
+    keys <- intersect(colnames(meta), colnames(data))
+    meta <- full_join(meta, data, by = keys)
   }
 
-  object$metadata <- object$metadata |>
+  object$metadata <- meta |>
     select(any_of(id_cols), everything())
 
   object
