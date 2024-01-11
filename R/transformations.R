@@ -26,7 +26,7 @@ filter.cevodata <- function(.data, ..., .preserve = FALSE) {
   # Lists of tibbles
   cd$SNVs  <- map(cd$SNVs,  \(x) semi_join(x, keep, by = "sample_id"))
   cd$CNAs  <- map(cd$CNAs,  \(x) semi_join(x, keep, by = "sample_id"))
-  cd$trans <- map(cd$trans, \(x) semi_join(x, keep, by = "sample_id"))
+  cd$stats <- map(cd$stats, \(x) semi_join(x, keep, by = "sample_id"))
 
   # Lists of cv_subitems
   cd$models <- map(cd$models, \(x) semi_join(x, keep))
@@ -98,7 +98,7 @@ merge.cevodata <- function(x, y,
   # Lists of tibbles
   cd$SNVs  <- merge_items(x$SNVs, y$SNVs)
   cd$CNAs  <- merge_items(x$CNAs, y$CNAs)
-  cd$trans <- merge_items(x$trans, y$trans)
+  cd$stats <- merge_items(x$stats, y$stats)
 
   # Lists of cv_subitems
   cd$models <- merge_items(x$models, y$models)

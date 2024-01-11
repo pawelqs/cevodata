@@ -7,7 +7,7 @@ new_cevodata <- function(name) {
     metadata = NULL,
     SNVs = list(),
     CNAs = list(),
-    trans = list(),
+    stats = list(),
     models = list(),
     misc = list(),
     settings = list(
