@@ -61,7 +61,7 @@ validate_SNVs <- function(snvs) {
 
 # ------------------------------- More getters ---------------------------------
 
-#' @describeIn assays Get SNVs in the wide table form
+#' @describeIn cevodata_components Get SNVs in the wide table form
 #' @param object cevodata object
 #' @param fill_na fill missing with this value
 #' @export

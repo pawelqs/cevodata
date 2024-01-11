@@ -1,12 +1,12 @@
 
-#' @rdname assays
+#' @rdname cevodata_components
 #' @export
 SNVs <- function(object, ...) {
   UseMethod("SNVs")
 }
 
 
-#' @rdname assays
+#' @rdname cevodata_components
 #' @export
 CNAs <- function(object, ...) {
   UseMethod("CNAs")

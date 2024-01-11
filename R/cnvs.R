@@ -1,7 +1,7 @@
 
 # ----------------------- Other CNV-related functions --------------------------
 
-#' @describeIn assays Get CNA variable names from cevodata object
+#' @describeIn cevodata_components Get CNA variable names from cevodata object
 #' @param which CNA assay to use
 #' @export
 get_CNAs_var_names <- function(object, which = default_CNAs(object), ...) {

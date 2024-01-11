@@ -71,17 +71,17 @@ add_metadata <- function(object, data) {
 
 
 #' Get/Add SNV/CNA data from the cevodata dataset
-#' @param object object
-#' @param snvs tibble with SNVs
-#' @param cnas tibble with CNAs
+#' @param object cevodata object
+#' @param snvs Tibble with SNVs
+#' @param cnas Tibble with CNAs
 #' @param models cv_subitem object with models
-#' @param name name for SNVs/CNAs assay
-#' @param ... other arguments
-#' @name adding_components
+#' @param name Name for SNVs/CNAs/models
+#' @param ... Other arguments
+#' @name cevodata_components
 NULL
 
 
-#' @describeIn adding_components Add new SNVs to cevodata
+#' @describeIn cevodata_components Add new SNVs to cevodata
 #' @export
 add_SNV_data <- function(object, snvs, name = NULL) {
   if (is.null(name)) {
@@ -96,7 +96,7 @@ add_SNV_data <- function(object, snvs, name = NULL) {
 }
 
 
-#' @describeIn adding_components Add new CNAs to cevodata
+#' @describeIn cevodata_components Add new CNAs to cevodata
 #' @export
 add_CNA_data <- function(object, cnas, name = NULL) {
   if (is.null(name)) {
@@ -117,7 +117,7 @@ add_stats <- function(object, stats, name) {
 }
 
 
-#' @describeIn adding_components Add new models to cevodata
+#' @describeIn cevodata_components Add new models to cevodata
 #' @export
 add_models <- function(object, models, name) {
   object$models[[name]] <- as_cv_subitem(models)
@@ -194,7 +194,7 @@ active_models <- function(object, ...) {
 # more getters in other files
 
 #' @return tibble
-#' @describeIn assays Get SNVs from cevodata dataset
+#' @describeIn cevodata_components Get SNVs from cevodata dataset
 #' @export
 SNVs.cevodata <- function(object, name = default_SNVs(object), ...) {
   if (name %not in% names(object$SNVs)) {
@@ -204,7 +204,7 @@ SNVs.cevodata <- function(object, name = default_SNVs(object), ...) {
 }
 
 
-#' @describeIn assays Get CNAs from cevodata dataset
+#' @describeIn cevodata_components Get CNAs from cevodata dataset
 #' @export
 CNAs.cevodata <- function(object, name = default_CNAs(object), ...) {
   if (name %not in% names(object$CNAs)) {
@@ -222,7 +222,7 @@ get_metadata <- function(cd) {
 }
 
 
-#' @describeIn assays Get models cevodata dataset
+#' @describeIn cevodata_components Get models cevodata dataset
 #' @export
 get_models <- function(object, name = active_models(object)) {
   if (name %not in% names(object$models)) {
