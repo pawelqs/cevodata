@@ -1,6 +1,9 @@
 
+# ----------------------------- Filter -----------------------------------------
+
 #' @export
 dplyr::filter
+
 
 #' Filter/subset cevodata object
 #'
@@ -14,97 +17,26 @@ dplyr::filter
 #' @return cevodata object
 #' @export
 filter.cevodata <- function(.data, ..., .preserve = FALSE) {
-  new_object <- .data
-  new_object$metadata <- filter(new_object$metadata, ...)
-  ids <- new_object$metadata$sample_id
-  patient_ids <- unique(new_object$metadata[["patient_id"]])
+  cd <- .data
+  cd$metadata <- get_metadata(cd) |>
+    filter(...)
+  keep <- cd$metadata |>
+    select(any_of(c("patient_id", "sample_id")))
 
-  new_object$SNVs   <- map(new_object$SNVs,   ~filter(.x, sample_id %in% ids))
-  new_object$CNAs   <- map(new_object$CNAs,   ~filter(.x, sample_id %in% ids))
-  new_object$models <- map(new_object$models, ~filter(.x, sample_id %in% ids))
-  new_object$misc   <- map(new_object$misc,   ~filter(.x, sample_id %in% ids))
-  new_object$misc_by_sample  <- map(new_object$misc_by_sample,  ~.x[ids])
-  new_object$misc_by_patient <- map(new_object$misc_by_patient, ~.x[patient_ids])
+  # Lists of tibbles
+  cd$SNVs  <- map(cd$SNVs,  \(x) semi_join(x, keep, by = "sample_id"))
+  cd$CNAs  <- map(cd$CNAs,  \(x) semi_join(x, keep, by = "sample_id"))
+  cd$trans <- map(cd$trans, \(x) semi_join(x, keep, by = "sample_id"))
 
-  if (is_cevodata_singlepatient(new_object)) {
-    class(new_object) <- c("singlepatient_cevodata", class(new_object))
-  }
-  new_object
+  # Lists of cv_subitems
+  cd$models <- map(cd$models, \(x) semi_join(x, keep))
+  cd$misc   <- map(cd$misc,   \(x) semi_join(x, keep))
+
+  cd
 }
 
 
-filter_joined_models <- function(joined_models, ...) {
-  if (is.null(joined_models)) {
-    return(NULL)
-  }
-  samples <- joined_models |>
-    map(~tibble(sample = c(.x$rowsample, .x$colsample))) |>
-    bind_rows(.id = "patient_id")
-
-  samples_kept <- samples |>
-    filter(...) |>
-    mutate(sample_kept = TRUE)
-
-  kept_patients <- samples |>
-    left_join(samples_kept, by = c("patient_id", "sample")) |>
-    group_by(.data$patient_id) |>
-    filter(all(.data$sample_kept)) |>
-    pull("patient_id") |>
-    unique()
-
-  joined_models[kept_patients]
-}
-
-
-#' Merge two cevodata objects
-#' @inheritParams base::merge
-#' @param name Name of the merged object
-#' @param verbose Show messages?
-#' @param .id datasets names will be saved to this metadata column, if provided
-#' @export
-merge.cevodata <- function(x, y, name = "Merged datasets", verbose = TRUE, .id = NULL, ...) {
-  if (!is.null(.id)) {
-    x$metadata[[.id]] <- x$name
-    y$metadata[[.id]] <- y$name
-  }
-  metadata <- bind_rows(x$metadata, y$metadata)
-  cd <- init_cevodata(name = name) |>
-    add_metadata(metadata)
-
-  cd$SNVs <- bind_assays(x, y, "SNVs")
-  cd$CNAs <- bind_assays(x, y, "CNAs")
-  cd$models <- bind_assays(x, y, "models")
-  cd$misc <- bind_assays(x, y, "misc")
-  cd$misc_by_sample <- map2(x$misc_by_sample, y$misc_by_sample, ~union(.x, .y))
-  cd$misc_by_patient <- map2(x$misc_by_patient, y$misc_by_patient, ~union(.x, .y))
-
-  if (verbose) {
-    message("Setting active SNVs to ", x$active_SNV)
-    message("Setting active CNAs to ", x$active_CNA)
-  }
-  cd$active_SNVs <- NULL
-  cd$active_CNAs <- NULL
-  active_assays <- list(
-    active_SNVs = x$active_SNVs,
-    active_CNAs = x$active_CNAs
-  )
-  cd <- c(cd, active_assays)
-  structure(cd, class = "cevodata")
-}
-
-
-bind_assays <- function(x, y, slot_name) {
-  assays <- c(names(x[[slot_name]]), names(y[[slot_name]])) |>
-    unique()
-  if (length(assays) > 0) {
-    assays |>
-      set_names(assays) |>
-      map(~bind_rows(x[[slot_name]][[.x]], y[[slot_name]][[.x]]))
-  } else {
-    list()
-  }
-}
-
+# ------------------------------ Split -----------------------------------------
 
 #' Split object
 #' @param object object to split
@@ -116,26 +48,103 @@ split_by <- function(object, ...) {
 
 
 #' @describeIn split_by Split cevodata object
+#'
+#' This function is based on `filter.cevodata()`, thus might be inefficient
+#' if there are too many levels in the var column.
+#'
 #' @param object cevodata object
-#' @param x name of column in metadata
+#' @param var name of column in metadata
 #' @export
-split_by.cevodata <- function(object, x, ...) {
-  split_names <- object$metadata[[x]] |>
+split_by.cevodata <- function(object, var, ...) {
+  split_names <- object$metadata |>
+    pull({{var}}) |>
     unique()
   splits <- split_names |>
     set_names(split_names) |>
-    map(~filter(object, .data[[x]] == .x))
+    map(~filter(object, {{var}} == .x))
   class(splits) <- c("cevo_splits", "list")
   splits
 }
 
 
-# @export
-# print.cevo_splits <- function(x, ...) {
-#   cli::cat_line("<cevo_splits> object. Splits:")
-#   cli::cat_line(paste0(names(x), collapse = ", "))
-# }
+#' @export
+print.cevo_splits <- function(x, ...) {
+  msg("<cevo_splits> object", verbose = TRUE)
+  msg("Splits:\t", paste0(names(x), collapse = ", "), verbose = TRUE)
+}
 
+
+# ----------------------------- Merge -----------------------------------------
+
+#' Merge two cevodata objects
+#' @inheritParams base::merge
+#' @param name Name of the merged object
+#' @param verbose Show messages?
+#' @param .id datasets names will be saved to this metadata column, if provided
+#' @export
+merge.cevodata <- function(x, y,
+                           ...,
+                           name = "Merged datasets",
+                           verbose = verbose::verbose("cevoverse"),
+                           .id = NULL) {
+  if (!is.null(.id)) {
+    x$metadata[[.id]] <- x$name
+    y$metadata[[.id]] <- y$name
+  }
+  meta <- bind_rows(x$metadata, y$metadata)
+  cd <- init_cevodata(name = name) |>
+    add_metadata(meta)
+
+  # Lists of tibbles
+  cd$SNVs  <- merge_items(x$SNVs, y$SNVs)
+  cd$CNAs  <- merge_items(x$CNAs, y$CNAs)
+  cd$trans <- merge_items(x$trans, y$trans)
+
+  # Lists of cv_subitems
+  cd$models <- merge_items(x$models, y$models)
+  cd$misc   <- merge_items(x$misc, y$misc)
+
+  msg("Default SNVs: ", default_SNVs(x), verbose = verbose)
+  msg("Default CNAs: ", default_CNAs(x), verbose = verbose)
+  cd$settings <- x$settings
+  cd
+}
+
+
+merge_items <- function(x, y) {
+  if (length(x) == 0 && length(y) == 0) {
+    return(list())
+  } else if (length(x) == 0) {
+    return(y)
+  } else if (length(y) == 0) {
+    return(x)
+  }
+
+  if ("tbl_df" %in% class(x[[1]])) {
+    fun <- bind_rows
+  } else if ("cv_subitem" %in% class(x[[1]])) {
+    fun <- merge
+  } else {
+    stop("Unknown item type")
+  }
+
+  item_names <- union(names(x), names(y))
+  res <- vector("list", length(item_names))
+  names(res) <- item_names
+  for (i in item_names) {
+    if (i %in% names(x) && i %in% names(y)) {
+      res[[i]] <- fun(x[[i]], y[[i]])
+    } else if (i %in% names(y)) {
+      res[[i]] <- y[[i]]
+    } else {
+      res[[i]] <- x[[i]]
+    }
+  }
+  res
+}
+
+
+# ----------------------------- Update -----------------------------------------
 
 #' Update cevodata object with values from another object
 #' @param object object to update

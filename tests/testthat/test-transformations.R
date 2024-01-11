@@ -1,53 +1,100 @@
-set_cevomod_verbosity(0)
+verbose(cevoverse = 0)
 
 data("tcga_brca_test")
 snvs <- SNVs(tcga_brca_test)
 cnas <- CNAs(tcga_brca_test)
-meta <- tcga_brca_test$metadata |>
+meta <- get_metadata(tcga_brca_test) |>
   mutate(
     patient_id = c("A", "A", "B", "B"),
     sample = c("S1", "S2", "S1", "S2")
   )
+sample_ids <- unique(meta$sample_id)
+test_models <- list(
+  coefs = tibble(sample_id = sample_ids, coef = 1:4),
+  residuals = tibble(sample_id = sample_ids, resid = 11:14),
+  info = list(source_stat = "xxx")
+)
 
+
+# ------------------------- Filter --------------------------------------------
 
 test_that("Filtering cevodata works", {
   patients <- unique(meta$patient_id)
   cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
     add_CNA_data(cnas = cnas, "tcga2") |>
     add_SNV_data(snvs = snvs, "tcga") |>
-    add_sample_data(meta) |>
-    intervalize_mutation_frequencies() |>
-    calc_SFS() |>
-    calc_Mf_1f()
-  cd$misc_by_sample[["slot1"]] <- meta$sample_id |>
-    set_names(meta$sample_id) |>
-    map(~c(1, 2, 3))
-  cd$misc_by_patient[["slot2"]] <- patients |>
-    set_names(patients) |>
-    map(~c(1, 2, 3))
-  cd <- filter(cd, sample_id == "TCGA-AC-A23H-01")
-  expect_equal(nrow(cd$CNAs$cnas), 285)
-  expect_equal(nrow(cd$CNAs$tcga2), 285)
-  expect_equal(nrow(cd$SNVs$tcga), 6419)
-  expect_equal(unique(cd$CNAs$cnas$sample_id), "TCGA-AC-A23H-01")
-  expect_equal(unique(cd$CNAs$tcga2$sample_id), "TCGA-AC-A23H-01")
-  expect_equal(unique(cd$SNVs$tcga$sample_id), "TCGA-AC-A23H-01")
-  expect_equal(unique(cd$models$SFS$sample_id), "TCGA-AC-A23H-01")
-  expected_misc_by_sample <- list(slot1 = list(`TCGA-AC-A23H-01` = c(1, 2, 3)))
-  expect_equal(cd$misc_by_sample, expected_misc_by_sample)
-  expected_misc_by_patient <- list(slot2 = list(A = c(1, 2, 3)))
-  expect_equal(cd$misc_by_patient, expected_misc_by_patient)
+    add_metadata(meta) |>
+    # add_trans(test_models, name = "simple_models") |>
+    add_models(test_models, name = "simple_models")
+
+  res <- filter(cd, sample_id == "TCGA-AC-A23H-01")
+
+  # SNVs
+  expect_equal(nrow(res$SNVs$tcga), 6419)
+  expect_equal(unique(res$SNVs$tcga$sample_id), "TCGA-AC-A23H-01")
+
+  # CNAs
+  expect_equal(nrow(res$CNAs$cnas), 285)
+  expect_equal(nrow(res$CNAs$tcga2), 285)
+  expect_equal(unique(res$CNAs$cnas$sample_id), "TCGA-AC-A23H-01")
+  expect_equal(unique(res$CNAs$tcga2$sample_id), "TCGA-AC-A23H-01")
+
+  # trans
+  # expect_equal(nrow(res$SNVs$tcga), 6419)
+  # expect_equal(unique(res$SNVs$tcga$sample_id), "TCGA-AC-A23H-01")
+
+  # Models
+  res_models <- get_models(res)
+  expect_equal(nrow(res_models$coefs), 1)
+  expect_equal(nrow(res_models$residuals), 1)
+  expect_equal(res_models$info, list(source_stat = "xxx"))
 })
 
+
+# ------------------------------- Split by -------------------------------------
+
+test_that("Splitting cevodata works", {
+  cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
+    add_CNA_data(cnas = cnas, "tcga2") |>
+    add_SNV_data(snvs = snvs, "tcga") |>
+    add_models(test_models, name = "simple_models")
+  cd$metadata$sex <- c("M", "M", "M", "F")
+  splits <- split_by(cd, sex, verbose = FALSE)
+  expect_named(splits, c("M", "F"))
+  expect_equal(get_metadata(splits$M)$sex, c("M", "M", "M"))
+  expect_equal(get_metadata(splits$F)$sex, c("F"))
+
+  # SNVs are splitted correctly
+  expect_equal(nrow(splits$M$SNVs$tcga), 17338)
+  expect_equal(nrow(splits$`F`$SNVs$tcga), 4232)
+
+  # CNAs are splitted correctly
+  expect_equal(nrow(splits$M$CNAs$cnas), 545)
+  expect_equal(nrow(splits$M$CNAs$tcga2), 545)
+  expect_equal(nrow(splits$`F`$CNAs$tcga2), 169)
+  expect_equal(nrow(splits$`F`$CNAs$tcga2), 169)
+
+  # Models are splitted correctly
+  res_models <- map(splits, get_models)
+  expect_equal(nrow(res_models$M$coefs), 3)
+  expect_equal(nrow(res_models$`F`$coefs), 1)
+  expect_equal(nrow(res_models$M$residuals), 3)
+  expect_equal(nrow(res_models$`F`$residuals), 1)
+})
+
+
+# ------------------------------- Merge -------------------------------------
 
 test_that("Merging cevodata works", {
   cd <- init_cevodata("TCGA BRCA small", cnas = cnas) |>
     add_CNA_data(cnas = cnas, "tcga2") |>
-    add_SNV_data(snvs = snvs, "tcga")
+    add_SNV_data(snvs = snvs, "tcga") |>
+    add_models(test_models, name = "simple_models")
   cd1 <- filter(cd, sample_id == "TCGA-AC-A23H-01")
   cd2 <- filter(cd, sample_id != "TCGA-AC-A23H-01")
-  cd_merged <- merge(cd1, cd2, name = "TCGA BRCA small", verbose = FALSE)
+  cd_merged <- merge(cd1, cd2, name = "TCGA BRCA small")
   output <- print(cd_merged) |>
     capture.output()
   expect_equal(object.size(cd_merged), object.size(cd))
 })
+
