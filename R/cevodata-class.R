@@ -74,13 +74,14 @@ add_metadata <- function(object, data) {
 #' @param object object
 #' @param snvs tibble with SNVs
 #' @param cnas tibble with CNAs
+#' @param models cv_subitem object with models
 #' @param name name for SNVs/CNAs assay
 #' @param ... other arguments
-#' @name assays
+#' @name adding_components
 NULL
 
 
-#' @describeIn assays Add new SNVs to cevodata
+#' @describeIn adding_components Add new SNVs to cevodata
 #' @export
 add_SNV_data <- function(object, snvs, name = NULL) {
   if (is.null(name)) {
@@ -95,7 +96,7 @@ add_SNV_data <- function(object, snvs, name = NULL) {
 }
 
 
-#' @describeIn assays Add new CNAs to cevodata
+#' @describeIn adding_components Add new CNAs to cevodata
 #' @export
 add_CNA_data <- function(object, cnas, name = NULL) {
   if (is.null(name)) {
@@ -116,7 +117,7 @@ add_stats <- function(object, stats, name) {
 }
 
 
-#' @describeIn assays Add new models to cevodata
+#' @describeIn adding_components Add new models to cevodata
 #' @export
 add_models <- function(object, models, name) {
   object$models[[name]] <- as_cv_subitem(models)
