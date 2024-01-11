@@ -125,18 +125,18 @@ add_models <- function(object, models, name) {
 #' @param object object
 #' @param value name of new default assay
 #' @param ... other arguments
-#' @name active_assays
+#' @name settings
 NULL
 
 
-#' @describeIn active_assays Get default SNVs assay of cevodata
+#' @describeIn settings Get default SNVs assay of cevodata
 #' @export
 default_SNVs <- function(object, ...) {
   object$settings$active_SNVs
 }
 
 
-#' @describeIn active_assays Set default SNVs assay of cevodata
+#' @describeIn settings Set default SNVs assay of cevodata
 #' @export
 `default_SNVs<-` <- function(object, ..., value) {
   if (value %not in% names(object$SNVs)) {
@@ -147,14 +147,14 @@ default_SNVs <- function(object, ...) {
 }
 
 
-#' @describeIn active_assays Get default CNAs assay of cevodata
+#' @describeIn settings Get default CNAs assay of cevodata
 #' @export
 default_CNAs <- function(object, ...) {
   object$settings$active_CNAs
 }
 
 
-#' @describeIn active_assays Set default CNAs assay of cevodata
+#' @describeIn settings Set default CNAs assay of cevodata
 #' @export
 `default_CNAs<-` <- function(object, ..., value) {
   if (value %not in% names(object$CNAs)) {
@@ -165,14 +165,14 @@ default_CNAs <- function(object, ...) {
 }
 
 
-#' @describeIn active_assays Get active models from cevodata
+#' @describeIn settings Get active models from cevodata
 #' @export
 active_models <- function(object, ...) {
   object$settings$active_models
 }
 
 
-#' @describeIn active_assays Set active models in cevodata
+#' @describeIn settings Set active models in cevodata
 #' @export
 `active_models<-` <- function(object, ..., value) {
   if (value %not in% names(object$models)) {

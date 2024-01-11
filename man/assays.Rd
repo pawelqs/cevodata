@@ -5,8 +5,10 @@
 \alias{assays}
 \alias{add_SNV_data}
 \alias{add_CNA_data}
+\alias{add_models}
 \alias{SNVs.cevodata}
 \alias{CNAs.cevodata}
+\alias{get_models}
 \alias{get_CNAs_var_names}
 \alias{SNVs}
 \alias{CNAs}
@@ -17,9 +19,13 @@ add_SNV_data(object, snvs, name = NULL)
 
 add_CNA_data(object, cnas, name = NULL)
 
-\method{SNVs}{cevodata}(object, which = default_SNVs(object), ...)
+add_models(object, models, name)
 
-\method{CNAs}{cevodata}(object, which = default_CNAs(object), ...)
+\method{SNVs}{cevodata}(object, name = default_SNVs(object), ...)
+
+\method{CNAs}{cevodata}(object, name = default_CNAs(object), ...)
+
+get_models(object, name = active_models(object))
 
 get_CNAs_var_names(object, which = default_CNAs(object), ...)
 
@@ -38,9 +44,9 @@ get_SNVs_wider(object, fill_na = NULL)
 
 \item{cnas}{tibble with CNAs}
 
-\item{which}{CNA assay to use}
-
 \item{...}{other arguments}
+
+\item{which}{CNA assay to use}
 
 \item{fill_na}{fill missing with this value}
 }
@@ -56,9 +62,13 @@ Get/Add SNV/CNA data from the cevodata dataset
 
 \item \code{add_CNA_data()}: Add new CNAs to cevodata
 
+\item \code{add_models()}: Add new models to cevodata
+
 \item \code{SNVs(cevodata)}: Get SNVs from cevodata dataset
 
 \item \code{CNAs(cevodata)}: Get CNAs from cevodata dataset
+
+\item \code{get_models()}: Get models cevodata dataset
 
 \item \code{get_CNAs_var_names()}: Get CNA variable names from cevodata object
 
