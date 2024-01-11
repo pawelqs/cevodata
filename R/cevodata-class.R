@@ -110,6 +110,12 @@ add_CNA_data <- function(object, cnas, name = NULL) {
 }
 
 
+add_stats <- function(object, stats, name) {
+  object$stats[[name]] <- stats
+  object
+}
+
+
 #' @describeIn assays Add new models to cevodata
 #' @export
 add_models <- function(object, models, name) {
