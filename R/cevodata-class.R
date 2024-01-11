@@ -7,6 +7,7 @@ new_cevodata <- function(name) {
     metadata = NULL,
     SNVs = list(),
     CNAs = list(),
+    trans = list(),
     models = list(),
     misc = list(),
     settings = list(
@@ -45,12 +46,35 @@ init_cevodata <- function(name = "Unnamed dataset",
 
 # ------------------------------ Adding data -----------------------------------
 
+#' Add metadata to the cevodata object
+#' @param object object
+#' @param data name of new default assay
+add_metadata <- function(object, data) {
+  id_cols <- c("patient_id", "sample_id")
+  if (!any(id_cols %in% colnames(data))) {
+    stop("Metadata must have patient_id or sample_id column!")
+  }
+
+  if (is.null(object$metadata)) {
+    meta <- data
+  } else {
+    meta <- get_metadata(object)
+    keys <- intersect(colnames(meta), colnames(data))
+    meta <- full_join(meta, data, by = keys)
+  }
+
+  object$metadata <- meta |>
+    select(any_of(id_cols), everything())
+
+  object
+}
+
+
 #' Get/Add SNV/CNA data from the cevodata dataset
 #' @param object object
 #' @param snvs tibble with SNVs
 #' @param cnas tibble with CNAs
 #' @param name name for SNVs/CNAs assay
-#' @param which assay to use - uses active_SNVs if none
 #' @param ... other arguments
 #' @name assays
 NULL
@@ -86,26 +110,11 @@ add_CNA_data <- function(object, cnas, name = NULL) {
 }
 
 
-#' Add metadata to the cevodata object
-#' @param object object
-#' @param data name of new default assay
-add_metadata <- function(object, data) {
-  id_cols <- c("patient_id", "sample_id")
-  if (!any(id_cols %in% colnames(data))) {
-    stop("Metadata must have patient_id or sample_id column!")
-  }
-
-  if (is.null(object$metadata)) {
-    meta <- data
-  } else {
-    meta <- get_metadata(object)
-    keys <- intersect(colnames(meta), colnames(data))
-    meta <- full_join(meta, data, by = keys)
-  }
-
-  object$metadata <- meta |>
-    select(any_of(id_cols), everything())
-
+#' @describeIn assays Add new models to cevodata
+#' @export
+add_models <- function(object, models, name) {
+  object$models[[name]] <- as_cv_subitem(models)
+  active_models(object) <- name
   object
 }
 
@@ -156,27 +165,45 @@ default_CNAs <- function(object, ...) {
 }
 
 
+#' @describeIn active_assays Get active models from cevodata
+#' @export
+active_models <- function(object, ...) {
+  object$settings$active_models
+}
+
+
+#' @describeIn active_assays Set active models in cevodata
+#' @export
+`active_models<-` <- function(object, ..., value) {
+  if (value %not in% names(object$models)) {
+    stop("Chosen models must exist in object$models")
+  }
+  object$settings$active_models <- value
+  object
+}
+
+
 # ------------------------------ Basic getters ---------------------------------
 # more getters in other files
 
 #' @return tibble
 #' @describeIn assays Get SNVs from cevodata dataset
 #' @export
-SNVs.cevodata <- function(object, which = default_SNVs(object), ...) {
-  if (which %not in% names(object$SNVs)) {
-    stop(str_c(which, " does not exist in object$SNVs"))
+SNVs.cevodata <- function(object, name = default_SNVs(object), ...) {
+  if (name %not in% names(object$SNVs)) {
+    stop(str_c(name, " does not exist in object$SNVs"))
   }
-  object$SNVs[[which]]
+  object$SNVs[[name]]
 }
 
 
 #' @describeIn assays Get CNAs from cevodata dataset
 #' @export
-CNAs.cevodata <- function(object, which = default_CNAs(object), ...) {
-  if (which %not in% names(object$CNAs)) {
-    stop(str_c(which, " does not exist in object$CNAs"))
+CNAs.cevodata <- function(object, name = default_CNAs(object), ...) {
+  if (name %not in% names(object$CNAs)) {
+    stop(str_c(name, " does not exist in object$CNAs"))
   }
-  object$CNAs[[which]]
+  object$CNAs[[name]]
 }
 
 
@@ -185,6 +212,16 @@ CNAs.cevodata <- function(object, which = default_CNAs(object), ...) {
 #' @export
 get_metadata <- function(cd) {
   cd$metadata
+}
+
+
+#' @describeIn assays Get models cevodata dataset
+#' @export
+get_models <- function(object, name = active_models(object)) {
+  if (name %not in% names(object$models)) {
+    stop(str_c(name, " does not exist in object$models"))
+  }
+  object$models[[name]]
 }
 
 
@@ -198,6 +235,7 @@ update_cevodata_v2_to_v3 <- function(cd) {
   new$metadata <- cd$metadata
   new$SNVs <- cd$SNVs
   new$CNAs <- cd$CNVs
+  new$transformations <- list()
   new$settings <- list(
     active_SNVs = cd$active_SNVs,
     active_CNAs = cd$active_CNAs,
