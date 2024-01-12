@@ -45,7 +45,12 @@ msg <- function(...,
 
 
 get_verbosity <- function() {
-  verbose::verbose("cevoverse")
+  v <- verbose::verbose("cevoverse")
+  if (is.null(v)) {
+    0
+  } else {
+    v
+  }
 }
 
 
