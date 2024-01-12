@@ -5,13 +5,6 @@
 '%not in%' <- function(x,y)!('%in%'(x,y))
 
 
-join_aes <- function(aes_default, aes_2) {
-  aes <- c(as.list(aes_default[names(aes_default) %not in% names(aes_2)]), aes_2)
-  class(aes) <- 'uneval'
-  aes
-}
-
-
 drop_na_columns <- function(.data) {
   .data |>
     keep(~all(!is.na(.x)))
@@ -45,6 +38,23 @@ get_f_range <- function(snvs, pct_left = 0.05, pct_right = 0.95) {
 }
 
 
+get_verbosity <- function() {
+  v <- verbose::verbose("cevoverse")
+  if (is.null(v)) {
+    0
+  } else {
+    v
+  }
+}
+
+
+join_aes <- function(aes_default, aes_2) {
+  aes <- c(as.list(aes_default[names(aes_default) %not in% names(aes_2)]), aes_2)
+  class(aes) <- 'uneval'
+  aes
+}
+
+
 msg <- function(...,
                 collapse = "",
                 col = "steelblue3",
@@ -59,24 +69,26 @@ msg <- function(...,
 }
 
 
-get_verbosity <- function() {
-  v <- verbose::verbose("cevoverse")
-  if (is.null(v)) {
-    0
-  } else {
-    v
-  }
+#' @export
+print.cevo_snvs <- function(x, ...) {
+  msg("<cevo_snvs> tibble")
+  NextMethod()
 }
 
 
-verbose_down <- function(verbose) {
-  if (isTRUE(verbose) || isFALSE(verbose) || verbose == 0) {
-    FALSE
-  } else if (is.numeric(verbose) && verbose > 0) {
-    verbose - 1
-  } else {
-    stop("Verbose should be logical or positive")
-  }
+#' @describeIn quick_save Quick load of ~/.cevomod/object.Rds
+#' @export
+quick_load <- function() {
+  read_rds("~/.cevodata/object.Rds")
+}
+
+
+#' Quick save to ~/.cevomod directory
+#' @param object object to save
+#' @export
+quick_save <- function(object) {
+  dir.create("~/.cevodata", showWarnings = FALSE)
+  write_rds(object, "~/.cevodata/object.Rds")
 }
 
 
@@ -103,23 +115,6 @@ require_columns <- function(tbl, ...) {
 }
 
 
-#' @export
-print.cevo_snvs <- function(x, ...) {
-  msg("<cevo_snvs> tibble")
-  NextMethod()
-}
-
-
-#' Fill na values in the object
-#' @param object object
-#' @param val value to fill the NAs
-#' @export
-fill_na <- function(object, val) {
-  object[is.na(object)] <- val
-  object
-}
-
-
 segment <- function(vec) {
   x <- vec != lag(vec)
   x[1] <- 0
@@ -127,17 +122,12 @@ segment <- function(vec) {
 }
 
 
-#' Quick save to ~/.cevomod directory
-#' @param object object to save
-#' @export
-quick_save <- function(object) {
-  dir.create("~/.cevodata", showWarnings = FALSE)
-  write_rds(object, "~/.cevodata/object.Rds")
-}
-
-
-#' @describeIn quick_save Quick load of ~/.cevomod/object.Rds
-#' @export
-quick_load <- function() {
-  read_rds("~/.cevodata/object.Rds")
+verbose_down <- function(verbose) {
+  if (isTRUE(verbose) || isFALSE(verbose) || verbose == 0) {
+    FALSE
+  } else if (is.numeric(verbose) && verbose > 0) {
+    verbose - 1
+  } else {
+    stop("Verbose should be logical or positive")
+  }
 }
