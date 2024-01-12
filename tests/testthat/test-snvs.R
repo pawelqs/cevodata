@@ -38,7 +38,6 @@ test_that("SNVs_CNAs() works", {
     "S2",       "chr1", 300,  0.1,  NA_real_,  NA_real_,  NA_real_
   )
   res <- SNVs_CNAs(cd)
-  # sample_data <- tibble(sample_id = c("S1", "S2"), sex = c())
   expect_identical(res$total_cn, expected$total_cn)
   expect_identical(res$minor_cn, expected$minor_cn)
 })
