@@ -1,4 +1,6 @@
 
+# -------------------------------- cevodata ------------------------------------
+
 #' @export
 print.cevodata <- function(x, ...) {
   summ <- summary(x)
@@ -126,4 +128,13 @@ summarize_SNVs <- function(object) {
     summ$SNVs_str <- str_c("No mutations added")
   }
   summ
+}
+
+
+# --------------------------------- splits -------------------------------------
+
+#' @export
+print.cevo_splits <- function(x, ...) {
+  msg("<cevo_splits> object", verbose = TRUE)
+  msg("Splits:\t", paste0(names(x), collapse = ", "), verbose = TRUE)
 }

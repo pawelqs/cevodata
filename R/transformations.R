@@ -38,15 +38,6 @@ filter.cevodata <- function(.data, ..., .preserve = FALSE) {
 
 # ------------------------------ Split -----------------------------------------
 
-#' Split object
-#' @param object object to split
-#' @param ... other arguments
-#' @export
-split_by <- function(object, ...) {
-  UseMethod("split_by")
-}
-
-
 #' @describeIn split_by Split cevodata object
 #'
 #' This function is based on `filter.cevodata()`, thus might be inefficient
@@ -64,13 +55,6 @@ split_by.cevodata <- function(object, var, ...) {
     map(~filter(object, {{var}} == .x))
   class(splits) <- c("cevo_splits", "list")
   splits
-}
-
-
-#' @export
-print.cevo_splits <- function(x, ...) {
-  msg("<cevo_splits> object", verbose = TRUE)
-  msg("Splits:\t", paste0(names(x), collapse = ", "), verbose = TRUE)
 }
 
 
