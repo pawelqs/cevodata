@@ -13,6 +13,7 @@ drop_na_columns <- function(.data) {
 
 factorize <- function(tbl, col, levels = unique(tbl[["col"]])) {
   tbl[[col]] <- parse_factor(tbl[[col]], levels = levels)
+  tbl
 }
 
 
