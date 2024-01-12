@@ -41,6 +41,10 @@ plot_SFS(object, ...)
 
 \item{...}{other arguments}
 
+\item{name}{name of slot with SFS statistics}
+
+\item{snvs_name}{Which SNVs to use?}
+
 \item{column}{VAF or CCF/2}
 
 \item{bins}{Resolution of the cumulative tails calculation}
@@ -50,10 +54,6 @@ plot_SFS(object, ...)
 \item{mapping}{aes()}
 
 \item{geom}{Geom}
-
-\item{which_snvs}{Which SNVs to use?}
-
-\item{model_name}{name of slot with SFS statistics}
 }
 \description{
 Site Frequency Spectra (or Variant Allele Frequency Spectra) are the main
@@ -88,6 +88,5 @@ data("test_data")
 
 test_data |>
   calc_SFS() |>
-  plot_SFS() +
-  layer_mutations(test_data, mapping = ggplot2::aes(x = VAF), drivers = "BRCA")
+  plot_SFS()
 }

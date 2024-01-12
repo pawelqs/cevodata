@@ -7,7 +7,8 @@
 #' statistic used by cevomod.
 #'
 #' @param object SNVs tibble object
-#' @param which_snvs Which SNVs to use?
+#' @param name Name of the slot to save SFS
+#' @param snvs_name Which SNVs to use?
 #' @param column VAF or CCF/2
 #' @param bins Resolution of the cumulative tails calculation
 #' @param verbose Verbose?
@@ -18,8 +19,7 @@
 #'
 #' test_data |>
 #'   calc_SFS() |>
-#'   plot_SFS() +
-#'   layer_mutations(test_data, mapping = ggplot2::aes(x = VAF), drivers = "BRCA")
+#'   plot_SFS()
 #' @name sfs
 NULL
 
@@ -120,7 +120,7 @@ calc_SFS.cevo_snvs <- function(object,
 #'
 #' Calculates SFS if sfs slot in object$stats is empty
 #'
-#' @param model_name name of slot with SFS statistics
+#' @param name name of slot with SFS statistics
 #' @param verbose verbose?
 #' @export
 get_SFS <- function(object, name = "SFS", verbose = get_verbosity(), ...) {
