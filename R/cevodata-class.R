@@ -251,11 +251,16 @@ get_stats <- function(object, name) {
 #' @param cd <cevodata> object
 #' @export
 update_cevodata_v2_to_v3 <- function(cd) {
+  stat_default_names <- c("SFS", "cumulative_tails" ,"Mf_1f")
+  stats_recognized <- intersect(names(cd$models), stat_default_names)
+  models_recognized <- setdiff(names(cd$models), stat_default_names)
+
   new <- init_cevodata(cd$name)
   new$metadata <- cd$metadata
   new$SNVs <- cd$SNVs
   new$CNAs <- cd$CNVs
-  new$transformations <- list()
+  new$stats <- cd$models[stats_recognized]
+  new$models <- cd$models[models_recognized]
   new$settings <- list(
     active_SNVs = cd$active_SNVs,
     active_CNAs = cd$active_CNAs,
