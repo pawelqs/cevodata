@@ -69,7 +69,7 @@ split_by.cevodata <- function(object, var, ...) {
 merge.cevodata <- function(x, y,
                            ...,
                            name = "Merged datasets",
-                           verbose = verbose::verbose("cevoverse"),
+                           verbose = get_verbosity(),
                            .id = NULL) {
   if (!is.null(.id)) {
     x$metadata[[.id]] <- x$name

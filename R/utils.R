@@ -34,13 +34,18 @@ msg <- function(...,
                 collapse = "",
                 col = "steelblue3",
                 new_line = TRUE,
-                verbose = verbose::verbose("cevoverse")) {
+                verbose = get_verbosity()) {
   msg <- str_c(list(...), collapse = collapse)
   if (verbose && new_line) {
     cli::cat_line(msg, col = col)
   } else if (verbose) {
    cat(crayon::blue(msg))
   }
+}
+
+
+get_verbosity <- function() {
+  verbose::verbose("cevoverse")
 }
 
 

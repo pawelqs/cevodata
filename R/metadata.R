@@ -11,7 +11,7 @@
 #' @param name Name of the metadata column with chosen purity values
 #' @param verbose Verbose?
 #' @export
-use_purity <- function(cd, name, verbose = verbose::verbose("cevoverse")) {
+use_purity <- function(cd, name, verbose = get_verbosity()) {
   if (name %not in% names(cd$metadata)) {
     stop(
       "`name` should be a name of the column in the metadata tibble, ",
