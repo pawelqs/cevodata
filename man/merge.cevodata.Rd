@@ -9,7 +9,7 @@
   y,
   ...,
   name = "Merged datasets",
-  verbose = verbose::verbose("cevoverse"),
+  verbose = get_verbosity(),
   .id = NULL
 )
 }
