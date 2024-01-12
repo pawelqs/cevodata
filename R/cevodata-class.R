@@ -74,6 +74,7 @@ add_metadata <- function(object, data) {
 #' @param object cevodata object
 #' @param snvs Tibble with SNVs
 #' @param cnas Tibble with CNAs
+#' @param stats Tibble with stats
 #' @param models cv_subitem object with models
 #' @param name Name for SNVs/CNAs/models
 #' @param ... Other arguments
@@ -111,6 +112,8 @@ add_CNA_data <- function(object, cnas, name = NULL) {
 }
 
 
+#' @describeIn cevodata_components Add new models to cevodata
+#' @export
 add_stats <- function(object, stats, name) {
   object$stats[[name]] <- stats
   object
@@ -229,6 +232,16 @@ get_models <- function(object, name = active_models(object)) {
     stop(str_c(name, " does not exist in object$models"))
   }
   object$models[[name]]
+}
+
+
+#' @describeIn cevodata_components Get stats from cevodata object
+#' @export
+get_stats <- function(object, name) {
+  if (name %not in% names(object$stats)) {
+    stop(str_c(name, " does not exist in object$stats"))
+  }
+  object$stats[[name]]
 }
 
 

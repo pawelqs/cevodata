@@ -5,10 +5,12 @@
 \alias{cevodata_components}
 \alias{add_SNV_data}
 \alias{add_CNA_data}
+\alias{add_stats}
 \alias{add_models}
 \alias{SNVs.cevodata}
 \alias{CNAs.cevodata}
 \alias{get_models}
+\alias{get_stats}
 \alias{get_CNAs_var_names}
 \alias{SNVs}
 \alias{CNAs}
@@ -19,6 +21,8 @@ add_SNV_data(object, snvs, name = NULL)
 
 add_CNA_data(object, cnas, name = NULL)
 
+add_stats(object, stats, name)
+
 add_models(object, models, name)
 
 \method{SNVs}{cevodata}(object, name = default_SNVs(object), ...)
@@ -26,6 +30,8 @@ add_models(object, models, name)
 \method{CNAs}{cevodata}(object, name = default_CNAs(object), ...)
 
 get_models(object, name = active_models(object))
+
+get_stats(object, name)
 
 get_CNAs_var_names(object, which = default_CNAs(object), ...)
 
@@ -43,6 +49,8 @@ get_SNVs_wider(object, fill_na = NULL)
 \item{name}{Name for SNVs/CNAs/models}
 
 \item{cnas}{Tibble with CNAs}
+
+\item{stats}{Tibble with stats}
 
 \item{models}{cv_subitem object with models}
 
@@ -64,6 +72,8 @@ Get/Add SNV/CNA data from the cevodata dataset
 
 \item \code{add_CNA_data()}: Add new CNAs to cevodata
 
+\item \code{add_stats()}: Add new models to cevodata
+
 \item \code{add_models()}: Add new models to cevodata
 
 \item \code{SNVs(cevodata)}: Get SNVs from cevodata dataset
@@ -71,6 +81,8 @@ Get/Add SNV/CNA data from the cevodata dataset
 \item \code{CNAs(cevodata)}: Get CNAs from cevodata dataset
 
 \item \code{get_models()}: Get models cevodata dataset
+
+\item \code{get_stats()}: Get stats from cevodata object
 
 \item \code{get_CNAs_var_names()}: Get CNA variable names from cevodata object
 
