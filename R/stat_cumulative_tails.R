@@ -1,4 +1,3 @@
-
 # ---------------------------- Calc cumulative tails ---------------------------
 
 #' Cumulative tails
@@ -79,7 +78,7 @@ calc_cumulative_tails.cevo_snvs <- function(object,
 
 
 .calc_cumulative_tails <- function(dt, bins = 100) {
-  breaks <- c(-1/bins, seq(0, 1, length.out = bins + 1))
+  breaks <- c(-1 / bins, seq(0, 1, length.out = bins + 1))
   dt %>%
     mutate(
       x_interval = cut(.data$x, breaks = breaks),
@@ -187,10 +186,10 @@ plot.cevo_cumulative_tails_tbl <- function(x, scale_y = TRUE, scales = "loglog",
 #' snvs <- SNVs(tcga_brca_test)
 #'
 #' ggplot(snvs, aes(VAF, color = sample_id)) +
-#'  stat_cumulative_tail()
+#'   stat_cumulative_tail()
 #'
 #' ggplot(snvs, aes(VAF, y = stat(y), color = sample_id)) +
-#'  stat_cumulative_tail()
+#'   stat_cumulative_tail()
 #' @export
 stat_cumulative_tail <- function(mapping = NULL, data = NULL, geom = "point",
                                  position = "identity", na.rm = FALSE, show.legend = NA,

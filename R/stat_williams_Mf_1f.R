@@ -1,4 +1,3 @@
-
 # ------------------------------ Calc M(f) ~ 1/f -------------------------------
 
 #' William's M(f) ~ 1/f statistics
@@ -74,7 +73,7 @@ calc_Mf_1f.cevo_snvs <- function(object,
     arrange(desc(.data$f), .by_group = TRUE) %>%
     mutate(
       `M(f)` = cumsum(n),
-      `1/f` = round(1/.data$f, digits = 4)
+      `1/f` = round(1 / .data$f, digits = 4)
     ) |>
     ungroup()
   class(res) <- c("cevo_Mf_1f_tbl", class(res))
@@ -163,7 +162,7 @@ plot.cevo_Mf_1f_tbl <- function(x, from = 0.1, to = 0.25, scale = TRUE,
     round(digits = 2) %>%
     rev()
   break_vals <- 1 / breaks
-  break_labs  <- str_c("1/", breaks)
+  break_labs <- str_c("1/", breaks)
   default_aes <- aes(.data$`1/f`, .data$`M(f)`, color = .data$sample_id)
   mapping <- join_aes(default_aes, mapping)
 

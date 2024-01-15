@@ -1,4 +1,3 @@
-
 # -------------------------------- Calc SFS ------------------------------------
 
 #' Site Frequency Spectra
@@ -186,7 +185,7 @@ plot.cevo_SFS_tbl <- function(x, mapping = NULL, alpha = 0.8, ..., geom = "bar")
         join_aes(bar_mapping, mapping),
         stat = "identity", alpha = alpha, ...
       ) +
-      facet_wrap(~.data$sample_id, scales = "free")
+      facet_wrap(~ .data$sample_id, scales = "free")
   } else if (geom == "line") {
     p <- ggplot(x, join_aes(default_mapping, mapping)) +
       geom_line(...)
