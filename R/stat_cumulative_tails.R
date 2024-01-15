@@ -1,4 +1,6 @@
 
+# ---------------------------- Calc cumulative tails ---------------------------
+
 #' Cumulative tails
 #'
 #' cumulative_tails columns:
@@ -8,7 +10,8 @@
 #'   - y_scaled with y values scaled to the range 0-1
 #'
 #' @param object SNVs tibble object
-#' @param which_snvs Which SNVs to use?
+#' @param name Name of the cumulative tails stats
+#' @param snvs_name Which SNVs to use?
 #' @param column VAF or CCF/2
 #' @param bins Resolution of the cumulative tails calculation
 #' @param verbose Verbose?
@@ -36,15 +39,15 @@ calc_cumulative_tails <- function(object, ...) {
 #'   cevodata$models$cumulative_tails tibble
 #' @export
 calc_cumulative_tails.cevodata <- function(object,
-                                           which_snvs = default_SNVs(object),
-                                           column = get_frequency_measure_name(object, which_snvs),
+                                           name = "cumulative_tails",
+                                           snvs_name = default_SNVs(object),
+                                           column = get_snvs_frequency_measure(object, snvs_name),
                                            bins = 100,
-                                           verbose = get_cevomod_verbosity(),
+                                           verbose = get_verbosity(),
                                            ...) {
-  cumulative_tails <- SNVs(object, which_snvs) |>
+  cumulative_tails <- SNVs(object, snvs_name) |>
     calc_cumulative_tails(column = column, bins = bins, verbose = verbose)
-  object$models[["cumulative_tails"]] <- cumulative_tails
-  object
+  add_stats(object, cumulative_tails, name = name)
 }
 
 
@@ -52,9 +55,9 @@ calc_cumulative_tails.cevodata <- function(object,
 #' @describeIn cumulative_tails Calculate the cumulative tails
 #' @export
 calc_cumulative_tails.cevo_snvs <- function(object,
-                                            column = get_frequency_measure_name(object),
+                                            column = get_snvs_frequency_measure(object),
                                             bins = 100,
-                                            verbose = get_cevomod_verbosity(),
+                                            verbose = get_verbosity(),
                                             ...) {
   msg("Calculating cumulative tails, using ", column, " column", verbose = verbose)
 
@@ -66,6 +69,7 @@ calc_cumulative_tails.cevo_snvs <- function(object,
     rename(f = "x", f_interval = "x_interval") |>
     ungroup()
   class(res) <- c("cevo_cumulative_tails_tbl", class(res))
+  attr(res, "f_column") <- attributes(object)[["f_column"]]
   res
 }
 
@@ -89,13 +93,31 @@ calc_cumulative_tails.cevo_snvs <- function(object,
 }
 
 
+# ---------------------------- Get cumulative tails ----------------------------
+
+#' @rdname cumulative_tails
+#' @export
+get_cumulative_tails <- function(object, name = "cumulative_tails", verbose = get_verbosity(), ...) {
+  tryCatch(
+    {
+      get_stats(object, name = name)
+    },
+    error = function(e) {
+      msg("Calculating cumulative tails with 100 bins", verbose = verbose)
+      calc_cumulative_tails(object) |>
+        get_cumulative_tails(name = name)
+    }
+  )
+}
+
+
+# ---------------------------- Plot cumulative tails ---------------------------
 
 #' @rdname cumulative_tails
 #' @export
 plot_cumulative_tails <- function(object, ...) {
   UseMethod("plot_cumulative_tails")
 }
-
 
 
 #' @describeIn cumulative_tails Shortcut to plot cum tails from SNVs dataframe
@@ -105,12 +127,10 @@ plot_cumulative_tails <- function(object, ...) {
 #' @param ... passed to geom_line()
 #' @return ggplot obj
 #' @export
-plot_cumulative_tails.cevodata <- function(object, scale_y = TRUE, scales = "loglog", ...) {
-  if (is.null(object$models$cumulative_tails)) {
-    object <- calc_cumulative_tails(object)
-  }
-  object$models$cumulative_tails |>
-    left_join(object$metadata, by = "sample_id") |>
+plot_cumulative_tails.cevodata <- function(object, name = "SFS", ..., scale_y = TRUE, scales = "loglog") {
+  tails <- get_cumulative_tails(object)
+  tails |>
+    join_metadata(object) |>
     plot(scale_y = scale_y, scales = scales, ...)
 }
 
