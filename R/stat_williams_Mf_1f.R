@@ -57,7 +57,11 @@ calc_Mf_1f.cevo_snvs <- function(object,
                                  bins = 100,
                                  verbose = get_verbosity(),
                                  ...) {
-  msg("Calculating Williams's M(f) ~ 1/f statistics, using ", column, " column", verbose = verbose)
+  msg(
+    "Calculating Williams's M(f) ~ 1/f statistics, using ",
+    column, " column and ", bins, " bins",
+    verbose = verbose
+  )
 
   snvs <- cut_f_intervals(object, bins = bins, column = column)
   intervals <- attributes(snvs)$intervals
@@ -94,7 +98,7 @@ get_Mf_1f <- function(object, name = "Mf_1f", verbose = get_verbosity(), ...) {
       get_stats(object, name = name)
     },
     error = function(e) {
-      msg("Calculating Mf_1f with 100 bins", verbose = verbose)
+      msg("M(f) ~ 1/f stat not found. Calculating...", verbose = verbose)
       calc_Mf_1f(object) |>
         get_Mf_1f(name = name)
     }

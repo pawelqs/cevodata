@@ -129,7 +129,10 @@ get_SFS <- function(object, name = "SFS", verbose = get_verbosity(), ...) {
       get_stats(object, name = name)
     },
     error = function(e) {
-      msg("Calculating SFS with nbins = sample sequencing DP", verbose = verbose)
+      msg(
+        "M(f) ~ 1/f stat not found. Calculating SFS with nbins = sample sequencing DP",
+        verbose = verbose
+      )
       calc_SFS(object) |>
         get_SFS(name = name)
     }

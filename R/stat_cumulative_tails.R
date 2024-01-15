@@ -59,7 +59,10 @@ calc_cumulative_tails.cevo_snvs <- function(object,
                                             bins = 100,
                                             verbose = get_verbosity(),
                                             ...) {
-  msg("Calculating cumulative tails, using ", column, " column", verbose = verbose)
+  msg("Calculating cumulative tails, using ", column, " column and",
+    bins, " bins",
+    verbose = verbose
+  )
 
   res <- cut_f_intervals(object, column = column, bins = bins) |>
     filter(.data$f > 0) |>
@@ -103,7 +106,7 @@ get_cumulative_tails <- function(object, name = "cumulative_tails", verbose = ge
       get_stats(object, name = name)
     },
     error = function(e) {
-      msg("Calculating cumulative tails with 100 bins", verbose = verbose)
+      msg("Cumulative tails stat not found. Calculating...", verbose = verbose)
       calc_cumulative_tails(object) |>
         get_cumulative_tails(name = name)
     }
