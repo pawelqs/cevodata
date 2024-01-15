@@ -1,4 +1,6 @@
 
+# ------------------------------ Calc M(f) ~ 1/f -------------------------------
+
 #' William's M(f) ~ 1/f statistics
 #'
 #' Mf_1f columns description:
@@ -8,7 +10,8 @@
 #' - `M(f)` and `1/f` columns to plot William's statistics
 #'
 #' @param object SNVs tibble object
-#' @param which_snvs Which SNVs to use?
+#' @param name Name of the slot to save Mf_1f
+#' @param snvs_name Which SNVs to use?
 #' @param column VAF or CCF/2
 #' @param bins Resolution of the cumulative tails calculation
 #' @param verbose Verbose?
@@ -35,24 +38,24 @@ calc_Mf_1f <- function(object, ...) {
 #' @describeIn Mf_1f Method for <cevodata> object
 #' @export
 calc_Mf_1f.cevodata <- function(object,
-                                which_snvs = default_SNVs(object),
-                                column = get_frequency_measure_name(object, which_snvs),
+                                name = "Mf_1f",
+                                snvs_name = default_SNVs(object),
+                                column = get_snvs_frequency_measure(object, snvs_name),
                                 bins = 100,
-                                verbose = get_cevomod_verbosity(),
+                                verbose = get_verbosity(),
                                 ...) {
-  Mf_1f <- SNVs(object, which_snvs) |>
+  Mf_1f <- SNVs(object, snvs_name) |>
     calc_Mf_1f(column = column, bins = bins, verbose = verbose)
-  object$models[["Mf_1f"]] <- Mf_1f
-  object
+  add_stats(object, Mf_1f, name = name)
 }
 
 
 #' @describeIn Mf_1f Method for <cevo_snvs> object
 #' @export
 calc_Mf_1f.cevo_snvs <- function(object,
-                                 column = get_frequency_measure_name(object),
+                                 column = get_snvs_frequency_measure(object),
                                  bins = 100,
-                                 verbose = get_cevomod_verbosity(),
+                                 verbose = get_verbosity(),
                                  ...) {
   msg("Calculating Williams's M(f) ~ 1/f statistics, using ", column, " column", verbose = verbose)
 
@@ -71,9 +74,35 @@ calc_Mf_1f.cevo_snvs <- function(object,
     ) |>
     ungroup()
   class(res) <- c("cevo_Mf_1f_tbl", class(res))
+  attr(res, "f_column") <- attr(object, "f_column")
   res
 }
 
+
+# ------------------------------ Get M(f) ~ 1/f -------------------------------
+
+#' @describeIn Mf_1f Get M(f) ~ 1/f
+#'
+#' Calculates M(f) ~ 1/f if not calculated yet
+#'
+#' @param name name of slot with SFS statistics
+#' @param verbose verbose?
+#' @export
+get_Mf_1f <- function(object, name = "Mf_1f", verbose = get_verbosity(), ...) {
+  tryCatch(
+    {
+      get_stats(object, name = name)
+    },
+    error = function(e) {
+      msg("Calculating Mf_1f with 100 bins", verbose = verbose)
+      calc_Mf_1f(object) |>
+        get_Mf_1f(name = name)
+    }
+  )
+}
+
+
+# ------------------------------ Plot M(f) ~ 1/f -------------------------------
 
 #' @rdname Mf_1f
 #' @export
@@ -89,7 +118,7 @@ plot_Mf_1f.cevodata <- function(object,
                                 bins = NULL, from = 0.1, to = 0.25,
                                 scale = TRUE, geom = "point", ...) {
   get_Mf_1f(object) |>
-    left_join(object$metadata, by = "sample_id") |>
+    join_metadata(object) |>
     plot(geom = geom, from = from, to = to, scale = scale, ...)
 }
 
@@ -115,7 +144,6 @@ plot_Mf_1f.cevodata <- function(object,
 #'   plot_Mf_1f()
 plot.cevo_Mf_1f_tbl <- function(x, from = 0.1, to = 0.25, scale = TRUE,
                                 geom = "point", mapping = NULL, ...) {
-
   x <- x |>
     filter(.data$f >= from, .data$f <= to) |>
     group_by(.data$sample_id)
@@ -146,21 +174,4 @@ plot.cevo_Mf_1f_tbl <- function(x, from = 0.1, to = 0.25, scale = TRUE,
     scale_x_continuous(breaks = break_vals, labels = break_labs) +
     theme_minimal() +
     labs(title = "M(f) ~ 1/f")
-}
-
-
-#' @describeIn Mf_1f Get Mf_1f
-#' @param model_name name of slot with Mf_1f statistics
-#' @export
-get_Mf_1f <- function(object, model_name = "Mf_1f", verbose = TRUE, ...) {
-  Mf_1f <- object$models[[model_name]]
-  if (is.null(Mf_1f)) {
-    msg(
-      "Mf_1f's not calculated yet. Calculating with default bins",
-      verbose = verbose
-    )
-    object <- calc_Mf_1f(object)
-    Mf_1f <- object$models[[model_name]]
-  }
-  Mf_1f
 }
