@@ -151,10 +151,6 @@ plot_SFS <- function(object, ...) {
 #' @export
 plot_SFS.cevodata <- function(object, ..., mapping = NULL, name = "SFS", geom = "bar") {
   sfs <- get_SFS(object, name = name)
-  if (is.null(sfs)) {
-    object <- calc_SFS(object)
-    sfs <- get_SFS(object, name = name)
-  }
   # TODO: Fix 'width' warning
   sfs |>
     join_metadata(object) |>
