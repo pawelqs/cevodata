@@ -128,10 +128,10 @@ data("tcga_brca_test")
 snvs <- SNVs(tcga_brca_test)
 
 ggplot(snvs, aes(VAF, color = sample_id)) +
- stat_cumulative_tail()
+  stat_cumulative_tail()
 
 ggplot(snvs, aes(VAF, y = stat(y), color = sample_id)) +
- stat_cumulative_tail()
+  stat_cumulative_tail()
 }
 \seealso{
 \code{\link[ggplot2:stat_count]{stat_count()}}, which counts the number of cases at each x
