@@ -3,10 +3,10 @@ new_cnas <- CNAs(cd) |>
   filter(sample_id != "Sample 3")
 cd <- cd |>
   add_CNA_data(new_cnas, "new_cnas")
-res <- to_clip(cd)
+res <- export_to_clip(cd)
 
 
-test_that("to_clip() creates correct tibbles for each sample", {
+test_that("export_to_clip() creates correct tibbles for each sample", {
   expect_named(res, str_c("Sample ", 1:4))
   res |>
     map(\(x) names(x) == c("snvs", "cnas", "purities")) |>
@@ -16,7 +16,7 @@ test_that("to_clip() creates correct tibbles for each sample", {
 })
 
 
-test_that("to_clip() creates output files with correct column names", {
+test_that("export_to_clip() creates output files with correct column names", {
   expect_named(res$`Sample 1`$snvs, c("chromosome_index", "position", "alt_count", "ref_count"))
   expect_named(
     res$`Sample 1`$cnas,

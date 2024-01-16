@@ -18,7 +18,7 @@
 #' @param keep_chromosomes list of non-sex chromosomes. CliP does not use sex
 #'   chromosomes
 #' @export
-to_clip <- function(cd, out_dir = NULL,
+export_to_clip <- function(cd, out_dir = NULL,
                     snvs_name = default_SNVs(cd),
                     cnas_name = default_CNAs(cd),
                     purity_column = "purity",
