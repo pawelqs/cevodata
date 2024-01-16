@@ -1,6 +1,6 @@
 Package: cevodata
 Title: Class for storing cancer DNAseq data
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Paweł", "Kuś", , "kpawel2210@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4367-9821"))
@@ -12,7 +12,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    vdiffr,
+    readthis
 Config/testthat/edition: 3
 Imports: 
     cli,
@@ -30,6 +32,7 @@ Imports:
     tidyselect,
     verbose
 Remotes:
+    pawelqs/readthis,
     pawelqs/verbose
 LazyData: true
 Depends: 

@@ -64,3 +64,17 @@ test_that("filter_SNVs_by_regions works", {
   expect_identical(filter_SNVs_by_regions(snvs, regions = regions), expected)
   expect_identical(filter_SNVs_by_regions(snvs, bed_file = bed_file), expected)
 })
+
+
+test_that("set/get_snvs_frequency_measure() works", {
+  snvs <- tibble(
+    sample_id = "A",
+    mutation_id = str_c("chr", 1:3),
+    VAF = 0.5,
+    `CCF/2` = 0.25
+  ) |>
+    as_cevo_snvs()
+  expect_equal(get_snvs_frequency_measure(snvs), "VAF")
+  res <- set_snvs_frequency_measure(snvs, "CCF/2")
+  expect_equal(get_snvs_frequency_measure(res), "CCF/2")
+})

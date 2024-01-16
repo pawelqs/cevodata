@@ -15,8 +15,13 @@ as_cevo_snvs <- function(snvs) {
     "sample_id", "chrom", "pos", "gene_symbol",
     "ref", "alt", "ref_reads", "alt_reads", "impact", "VAF"
   )
+
+  f_column <- get_snvs_frequency_measure(snvs)
+  f_column <- if (is.null(f_column)) "VAF" else f_column
+
   snvs |>
     select(any_of(columns_to_order), everything()) |>
+    set_snvs_frequency_measure(f_column) |>
     new_cevo_snvs()
 }
 
@@ -157,4 +162,66 @@ filter_SNVs_by_regions <- function(snvs, regions = NULL, bed_file = NULL) {
   class(filtered_snvs) <- snv_classes
 
   filtered_snvs
+}
+
+
+# ------------------------- Set/Get frequency measures ------------------------
+
+#' Set/Get SNVs frequency measure
+#' @param object cevodata object
+#' @param column_name Name of new frequency measure column
+#' @param snvs_name Name of SNVs assay
+#' @param ... Other arguments
+#' @export
+set_snvs_frequency_measure <- function(object, ...) {
+  UseMethod("set_snvs_frequency_measure")
+}
+
+
+#' @rdname set_snvs_frequency_measure
+#' @export
+get_snvs_frequency_measure <- function(object, ...) {
+  UseMethod("get_snvs_frequency_measure")
+}
+
+
+#' @rdname set_snvs_frequency_measure
+#' @export
+set_snvs_frequency_measure.cevodata <- function(object,
+                                                column_name,
+                                                snvs_name = default_SNVs(object),
+                                                ...) {
+  snvs <- SNVs(object, snvs_name) |>
+    set_snvs_frequency_measure(column_name)
+  object |>
+    add_SNV_data(snvs, name = snvs_name)
+}
+
+
+#' @rdname set_snvs_frequency_measure
+#' @export
+get_snvs_frequency_measure.cevodata <- function(object,
+                                                snvs_name = default_SNVs(object),
+                                                ...) {
+  object |>
+    SNVs(snvs_name) |>
+    get_snvs_frequency_measure()
+}
+
+
+#' @rdname set_snvs_frequency_measure
+#' @export
+set_snvs_frequency_measure.tbl_df <- function(object, column_name, ...) {
+  if (!column_name %in% names(object)) {
+    stop("Column ", column_name, " not found in snvs")
+  }
+  attr(object, "f_column") <- column_name
+  object
+}
+
+
+#' @rdname set_snvs_frequency_measure
+#' @export
+get_snvs_frequency_measure.tbl_df <- function(object, ...) {
+  attr(object, "f_column")
 }

@@ -51,6 +51,11 @@ get_sample_ids <- function(cd) {
 }
 
 
+join_metadata <- function(tbl, cd, by = "sample_id") {
+  left_join(tbl, get_metadata(cd), by = by)
+}
+
+
 # get_patient_sex <- function(cd) {
 #   cd$metadata |>
 #     select("sample_id", "sex")
