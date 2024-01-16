@@ -84,33 +84,3 @@ test_that("plot_SFS() works", {
   })
   vdiffr::expect_doppelganger("test_data_sfs_2", p)
 })
-
-
-# test_that("get_non_zero_SFS_range works", {
-#   SFS <- tibble(
-#     sample_id = "S1",
-#     f = 1:100,
-#     y = 10
-#   ) |>
-#     mutate(
-#       y = case_when(
-#         f < 12 ~ 0,
-#         f == 40 ~ 0,
-#         f %in% c(54, 55) ~ 1,
-#         f > 65 ~ 0,
-#         TRUE ~ y
-#       ),
-#       f = f / 100
-#     )
-#   allowed_zero_bins <- 1
-#   y_treshold <- 1
-#
-#   expected <- tibble(
-#     sample_id = "S1",
-#     from = 0.12,
-#     to = 0.65
-#   )
-#   res <- get_non_zero_SFS_range(SFS)
-#
-#   expect_identical(res, expected)
-# })
