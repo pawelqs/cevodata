@@ -52,13 +52,13 @@ add_to_cevodata <- function(data, cd, name, verbose, ...) {
 #' @export
 add_to_cevodata.cevo_ASCAT <- function(data, cd,
                                        name = "ASCAT",
-                                       verbose = get_cevomod_verbosity(),
+                                       verbose = get_verbosity(),
                                        ...) {
   sample_data <- data$sample_statistics |>
     mutate(ascat_purity = 1 - .data$normal_contamination)
   cd |>
-    add_CNV_data(data$cnvs, name = name) |>
-    add_sample_data(sample_data) |>
+    add_CNA_data(data$cnas, name = name) |>
+    add_metadata(sample_data) |>
     use_purity("ascat_purity", verbose = verbose)
 }
 
@@ -66,16 +66,16 @@ add_to_cevodata.cevo_ASCAT <- function(data, cd,
 #' @export
 add_to_cevodata.cevo_FACETS <- function(data, cd,
                                         name = "FACETS",
-                                        verbose = get_cevomod_verbosity(),
+                                        verbose = get_verbosity(),
                                         ...) {
-  cnvs <- data |>
+  cnas <- data |>
     select(-"Purity", -"Ploidy")
   sample_data <- data |>
     select("sample_id", facets_purity = "Purity", facets_ploidy = "Ploidy") |>
     unique()
   cd |>
-    add_CNV_data(data, name = name) |>
-    add_sample_data(sample_data) |>
+    add_CNA_data(cnas, name = name) |>
+    add_metadata(sample_data) |>
     use_purity("facets_purity", verbose = verbose)
 }
 
@@ -83,7 +83,7 @@ add_to_cevodata.cevo_FACETS <- function(data, cd,
 #' @export
 add_to_cevodata.cevo_Mutect <- function(data, cd,
                                         name = "Mutect",
-                                        verbose = get_cevomod_verbosity(),
+                                        verbose = get_verbosity(),
                                         ...) {
   patient_ids_present <- "patient_id" %in% names(data)
 
@@ -96,7 +96,7 @@ add_to_cevodata.cevo_Mutect <- function(data, cd,
 
   cd <- add_SNV_data(cd, data, name = name)
   if (patient_ids_present) {
-    cd <- add_sample_data(cd, sample_data)
+    cd <- add_metadata(cd, sample_data)
   }
 
   cd
@@ -106,7 +106,7 @@ add_to_cevodata.cevo_Mutect <- function(data, cd,
 #' @export
 add_to_cevodata.cevo_Strelka <- function(data, cd,
                                          name = "Strelka",
-                                         verbose = get_cevomod_verbosity(),
+                                         verbose = get_verbosity(),
                                          ...) {
   patient_ids_present <- "patient_id" %in% names(data)
 
@@ -119,7 +119,7 @@ add_to_cevodata.cevo_Strelka <- function(data, cd,
 
   cd <- add_SNV_data(cd, data, name = name)
   if (patient_ids_present) {
-    cd <- add_sample_data(cd, sample_data)
+    cd <- add_metadata(cd, sample_data)
   }
 
   cd
