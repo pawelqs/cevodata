@@ -12,7 +12,7 @@
 #' @param out_dir Directory where to save files. List of items is returned if
 #'   out_dir is NULL
 #' @param snvs_name name of the snvs to use
-#' @param cnvs_name name of the cnvs to use
+#' @param cnas_name name of the cnas to use
 #' @param purity_column name of the metadata column with the purity estimates
 #'   to be used
 #' @param keep_chromosomes list of non-sex chromosomes. CliP does not use sex
@@ -20,14 +20,14 @@
 #' @export
 to_clip <- function(cd, out_dir = NULL,
                     snvs_name = default_SNVs(cd),
-                    cnvs_name = default_CNVs(cd),
+                    cnas_name = default_CNAs(cd),
                     purity_column = "purity",
                     keep_chromosomes = str_c("chr", 1:22)) {
   snvs <- get_clip_snvs(cd, snvs_name, keep_chromosomes)
-  cnvs <- get_clip_cnvs(cd, cnvs_name, keep_chromosomes)
+  cnas <- get_clip_cnas(cd, cnas_name, keep_chromosomes)
   purities <- get_clip_purities(cd, purity_column)
 
-  clip_data <- lst(snvs, cnvs, purities) |>
+  clip_data <- lst(snvs, cnas, purities) |>
     transpose()
 
   if (is.null(out_dir)) {
@@ -49,7 +49,7 @@ get_clip_snvs <- function(cd,
     ref_count = integer()
   )
 
-  SNVs(cd, which = snvs_name) |>
+  SNVs(cd, name = snvs_name) |>
     filter(.data$chrom %in% keep_chromosomes) |>
     transmute(
       sample_id = parse_factor(.data$sample_id, levels = get_sample_ids(cd)),
@@ -65,10 +65,10 @@ get_clip_snvs <- function(cd,
 
 
 
-get_clip_cnvs <- function(cd,
-                          cnvs_name = default_CNVs(cd),
+get_clip_cnas <- function(cd,
+                          cnas_name = default_CNAs(cd),
                           keep_chromosomes = str_c("chr", 1:22)) {
-  empty_clip_cnvs <- tibble(
+  empty_clip_cnas <- tibble(
     chromosome_index = double(),
     start_position = double(),
     end_position = double(),
@@ -77,7 +77,7 @@ get_clip_cnvs <- function(cd,
     total_cn = double()
   )
 
-  CNVs(cd, which = cnvs_name) |>
+  CNAs(cd, name = cnas_name) |>
     filter(.data$chrom %in% keep_chromosomes) |>
     transmute(
       sample_id = parse_factor(.data$sample_id, levels = get_sample_ids(cd)),
@@ -90,7 +90,7 @@ get_clip_cnvs <- function(cd,
     ) |>
     filter(.data$total_cn > 0) |>   # these records break CliP
     nest_by(.data$sample_id) |>
-    complete(.data$sample_id, fill = list(data = list(empty_clip_cnvs))) |>
+    complete(.data$sample_id, fill = list(data = list(empty_clip_cnas))) |>
     deframe()
 }
 
@@ -126,14 +126,14 @@ save_clip_files <- function(clip_data, out_dir) {
     function(x, sample_id) {
       # sample_id2 <- str_replace(sample_id, " ", "_")
       snvs_file <- file.path(out_dir, str_c(sample_id, ".snv.tsv"))
-      cnvs_file <- file.path(out_dir, str_c(sample_id, ".cnv.tsv"))
+      cnas_file <- file.path(out_dir, str_c(sample_id, ".cnv.tsv"))
       purity_file <- file.path(out_dir, str_c(sample_id, ".purity.tsv"))
 
       write_tsv(x$snvs, snvs_file)
-      write_tsv(x$cnvs, cnvs_file)
+      write_tsv(x$cnas, cnas_file)
       write_file(as.character(x$purities), purity_file)
 
-      tibble(sample_id, snvs_file, cnvs_file, purity_file)
+      tibble(sample_id, snvs_file, cnas_file, purity_file)
     }
   )
 
