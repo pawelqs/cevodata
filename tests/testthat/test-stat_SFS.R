@@ -15,37 +15,6 @@ test_that("Calculation of SFS works", {
 })
 
 
-# test_that("Calculation of SFS with resampling works", {
-#   object <- test_data
-#   sfs_resamples <- calc_SFS_resamples(object, times = 2)
-#
-#   expect_type(sfs_resamples, "list")
-#   expect_equal(length(sfs_resamples), 4)
-#
-#   sfs_resamples |>
-#     walk(expect_s3_class, "cevo_SFS_bootstraps")
-#
-#   attribs <- attributes(sfs_resamples$`Sample 1`$sfs[[1]])
-#   expect_equal(attribs$f_column, "VAF")
-# })
-#
-#
-# test_that("Calculation of SFS with resampling works with CCF/2", {
-#   object <- test_data |>
-#     calc_mutation_frequencies()
-#   sfs_resamples <- calc_SFS_resamples(object, times = 2)
-#
-#   expect_type(sfs_resamples, "list")
-#   expect_equal(length(sfs_resamples), 4)
-#
-#   sfs_resamples |>
-#     walk(expect_s3_class, "cevo_SFS_bootstraps")
-#
-#   attribs <- attributes(sfs_resamples$`Sample 1`$sfs[[1]])
-#   expect_equal(attribs$f_column, "CCF/2")
-# })
-
-
 # ---------------------------- Get SFS ----------------------------------------
 
 
