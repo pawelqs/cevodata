@@ -24,7 +24,7 @@ print.cevodata <- function(x, ...) {
   cli::cat_line("CNA assays: ", CNA_assays_str)
   cli::cat_line(summ$metadata_str)
   cli::cat_line(summ$SNVs_str)
-  cli::cat_line("Active models: ", x$active_models)
+  cli::cat_line("Active models: ", x$settings$active_models)
 }
 
 
