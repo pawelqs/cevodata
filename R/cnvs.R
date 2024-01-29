@@ -6,8 +6,7 @@
 #' @export
 get_CNAs_var_names <- function(object, which = default_CNAs(object), ...) {
   cnas_metadata <- CNAs(object, which = which) |>
-    select(-"sample_id", -"chrom", -"start", -"end") |>
-    drop_na_columns()
+    select(-"sample_id", -"chrom", -"start", -"end")
   colnames(cnas_metadata)
 }
 
