@@ -4,11 +4,14 @@
 \alias{misc_stats}
 \alias{calc_all_sample_stats}
 \alias{calc_all_patient_stats}
-\title{Get extra sampe/patient stats}
+\alias{calc_sample_sample_stats}
+\title{Calc extra sample/patient stats}
 \usage{
 calc_all_sample_stats(object, snvs = default_SNVs(object))
 
 calc_all_patient_stats(object, snvs = default_SNVs(object))
+
+calc_sample_sample_stats(object, snvs = default_SNVs(object))
 }
 \arguments{
 \item{object}{cevodata object}
@@ -16,12 +19,21 @@ calc_all_patient_stats(object, snvs = default_SNVs(object))
 \item{snvs}{Which SNVs to use}
 }
 \description{
-Get extra sampe/patient stats
+Calculated stats are saved to appropriate cevodata$stats slots and can be
+obtained with get_stats() function.
 }
 \section{Functions}{
 \itemize{
-\item \code{calc_all_sample_stats()}: Get misc sample level stats
+\item \code{calc_all_sample_stats()}: Calc misc sample level stats
 
-\item \code{calc_all_patient_stats()}: Get misc patient level stats
+Currently calculates only the sample mutation burden
+
+\item \code{calc_all_patient_stats()}: Calc misc patient level stats
+
+Currently calculates only the patient mutation burden
+
+\item \code{calc_sample_sample_stats()}: Calc sample-sample stats
+
+Currently calculates only the Jaccard index
 
 }}
