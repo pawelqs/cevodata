@@ -113,7 +113,7 @@ calc_sample_sample_stats <- function(object, snvs = default_SNVs(object)) {
 calc_Jaccard_indexes <- function(object, snvs = default_SNVs(object)) {
   require_columns(get_metadata(object), c("patient_id", "sample"))
   patients_to_keep <- get_metadata(object) |>
-    count(patient_id) |>
+    count(.data$patient_id) |>
     filter(n > 1) |>
     pull("patient_id")
 
