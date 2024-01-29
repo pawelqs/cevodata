@@ -49,6 +49,7 @@ init_cevodata <- function(name = "Unnamed dataset",
 #' Add metadata to the cevodata object
 #' @param object object
 #' @param data name of new default assay
+#' @export
 add_metadata <- function(object, data) {
   id_cols <- c("patient_id", "sample_id")
   if (!any(id_cols %in% colnames(data))) {

@@ -51,6 +51,11 @@ get_sample_ids <- function(cd) {
 }
 
 
+#' Join object metadata to a tibble
+#' @param tbl Tibble
+#' @param cd <cevodata> object
+#' @param by Column name to join by
+#' @export
 join_metadata <- function(tbl, cd, by = "sample_id") {
   left_join(tbl, get_metadata(cd), by = by)
 }

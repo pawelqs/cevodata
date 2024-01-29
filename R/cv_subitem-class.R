@@ -2,7 +2,9 @@
 # ------------------------- cv_subitem class -----------------------------------
 
 new_cv_subitem <- function(x) {
-  structure(x, class = "cv_subitem")
+  classes <- c("cv_subitem", class(x)) |>
+    unique()
+  structure(x, class = classes)
 }
 
 
