@@ -20,13 +20,14 @@ filter.cevodata <- function(.data, ..., .preserve = FALSE) {
   cd <- .data
   cd$metadata <- get_metadata(cd) |>
     filter(...)
+  id_cols <- c("patient_id", "sample_id")
   keep <- cd$metadata |>
-    select(any_of(c("patient_id", "sample_id")))
+    select(any_of(id_cols))
 
   # Lists of tibbles
   cd$SNVs  <- map(cd$SNVs,  \(x) semi_join(x, keep, by = "sample_id"))
   cd$CNAs  <- map(cd$CNAs,  \(x) semi_join(x, keep, by = "sample_id"))
-  cd$stats <- map(cd$stats, \(x) semi_join(x, keep, by = "sample_id"))
+  cd$stats <- map(cd$stats, \(x) semi_join(x, keep, by = intersect(names(x), id_cols)))
 
   # Lists of cv_subitems
   cd$models <- map(cd$models, \(x) semi_join(x, keep))
