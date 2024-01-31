@@ -200,7 +200,7 @@ active_models <- function(object, ...) {
 #' @return tibble
 #' @describeIn cevodata_components Get SNVs from cevodata dataset
 #' @export
-SNVs.cevodata <- function(object, name = default_SNVs(object), ...) {
+SNVs <- function(object, name = default_SNVs(object), ...) {
   if (name %not in% names(object$SNVs)) {
     stop(str_c(name, " does not exist in object$SNVs"))
   }
@@ -210,7 +210,7 @@ SNVs.cevodata <- function(object, name = default_SNVs(object), ...) {
 
 #' @describeIn cevodata_components Get CNAs from cevodata dataset
 #' @export
-CNAs.cevodata <- function(object, name = default_CNAs(object), ...) {
+CNAs <- function(object, name = default_CNAs(object), ...) {
   if (name %not in% names(object$CNAs)) {
     stop(str_c(name, " does not exist in object$CNAs"))
   }
@@ -233,6 +233,13 @@ get_models <- function(object, name = active_models(object)) {
     stop(str_c(name, " does not exist in object$models"))
   }
   object$models[[name]]
+}
+
+
+#' @describeIn cevodata_components Get names of the fitted models
+#' @export
+get_model_names <- function(object) {
+  names(object$models)
 }
 
 

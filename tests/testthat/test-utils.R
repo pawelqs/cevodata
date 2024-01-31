@@ -13,6 +13,12 @@ test_that("join_aes works", {
 })
 
 
+test_that("require_packages() works", {
+  expect_error(require_packages("nonexistingpackage"))
+  expect_no_error(require_packages("dplyr"))
+})
+
+
 test_that("segment() function works", {
   vec <- c(T, T, T, F, F, T, F, F)
   expect_equal(segment(vec), c(0, 0, 0, 1, 1, 2, 3, 3))

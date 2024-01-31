@@ -34,15 +34,20 @@ get_purities <- function(cd) {
 }
 
 
-get_patients_data <- function(metadata) {
-  patient_data_cols <- metadata |>
+#' Get metadata cols that are constant within each patient
+#' @param cd <cevodata> object
+#' @export
+get_patients_data <- function(cd) {
+  meta <- get_metadata(cd)
+  patient_data_cols <- meta |>
     group_by(.data$patient_id) |>
     summarise_all(n_distinct) |>
     map(~all(.x == 1)) |>
     keep(~.x) |>
     names()
-  metadata |>
-    select("patient_id", all_of(patient_data_cols))
+  meta |>
+    select("patient_id", all_of(patient_data_cols)) |>
+    unique()
 }
 
 

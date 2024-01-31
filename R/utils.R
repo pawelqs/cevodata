@@ -5,37 +5,9 @@
 '%not in%' <- function(x,y)!('%in%'(x,y))
 
 
-drop_na_columns <- function(.data) {
-  .data |>
-    keep(~all(!is.na(.x)))
-}
-
-
 factorize <- function(tbl, col, levels = unique(tbl[["col"]])) {
   tbl[[col]] <- parse_factor(tbl[[col]], levels = levels)
   tbl
-}
-
-
-#' Fill na values in the object
-#' @param object object
-#' @param val value to fill the NAs
-#' @export
-fill_na <- function(object, val) {
-  object[is.na(object)] <- val
-  object
-}
-
-
-get_f_range <- function(snvs, pct_left = 0.05, pct_right = 0.95) {
-  bounds <- snvs |>
-    filter(.data$f > 0.00001, !is.na(.data$f)) |>
-    group_by(.data$sample_id) |>
-    summarise(
-      lower_bound = stats::quantile(.data$f, pct_left),
-      higher_bound = stats::quantile(.data$f, pct_right)
-    )
-  bounds
 }
 
 
