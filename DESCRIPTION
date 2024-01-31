@@ -14,7 +14,9 @@ RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0),
     vdiffr,
-    readthis
+    readthis,
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 Imports: 
     cli,
@@ -38,3 +40,4 @@ LazyData: true
 Depends: 
     R (>= 2.10)
 URL: https://pawelqs.github.io/cevodata/
+VignetteBuilder: knitr
