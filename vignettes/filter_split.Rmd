@@ -1,0 +1,70 @@
+---
+title: "Filter or split cevodata"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Filter or split cevodata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cevodata)
+```
+
+# Transformations
+
+3 cevodata transforming functions have been implemented:
+
+- `filter()`
+- `split_by()`
+- `merge()`
+
+## Filter()
+
+`filter()` can be used to subset the cevodata using any metadata columns in a tidyverse manner
+
+```{r}
+test_data |> 
+  filter(sex == "female")
+```
+
+## split_by()
+
+`split_by()` to split cevodata by any metadata column
+
+```{r}
+splits <- test_data |> 
+  split_by(sex)
+
+splits
+```
+
+```{r}
+splits$male
+```
+
+
+## merge()
+
+`merge()` to merge 2 objects into one
+
+```{r}
+merge(splits$male, splits$female)
+```
+
+
+Transforming functions are helpful in investigating particular samples, for example, when one wants to see the VAF spectrum of one sample only quickly:
+
+```{r}
+test_data |> 
+  filter(sample_id == "Sample 2") |> 
+  plot_SFS()
+```
+
