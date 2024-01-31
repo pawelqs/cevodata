@@ -236,6 +236,13 @@ get_models <- function(object, name = active_models(object)) {
 }
 
 
+#' @describeIn cevodata_components Get names of the fitted models
+#' @export
+get_model_names <- function(object) {
+  names(object$models)
+}
+
+
 #' @describeIn cevodata_components Get stats from cevodata object
 #' @export
 get_stats <- function(object, name) {

@@ -9,6 +9,7 @@
 \alias{SNVs}
 \alias{CNAs}
 \alias{get_models}
+\alias{get_model_names}
 \alias{get_stats}
 \alias{get_CNAs_var_names}
 \alias{get_SNVs_wider}
@@ -27,6 +28,8 @@ SNVs(object, name = default_SNVs(object), ...)
 CNAs(object, name = default_CNAs(object), ...)
 
 get_models(object, name = active_models(object))
+
+get_model_names(object)
 
 get_stats(object, name)
 
@@ -74,6 +77,8 @@ Get/Add SNV/CNA data from the cevodata dataset
 \item \code{CNAs()}: Get CNAs from cevodata dataset
 
 \item \code{get_models()}: Get models cevodata dataset
+
+\item \code{get_model_names()}: Get names of the fitted models
 
 \item \code{get_stats()}: Get stats from cevodata object
 
