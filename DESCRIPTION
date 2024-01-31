@@ -37,3 +37,4 @@ Remotes:
 LazyData: true
 Depends: 
     R (>= 2.10)
+URL: https://pawelqs.github.io/cevodata/
