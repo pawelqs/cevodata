@@ -1,0 +1,202 @@
+---
+title: "cevodata construction"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{cevodata construction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Intro
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`cevodata` class is a data structure designed to store the mutational data (SNVs, CNAs), metadata, and the analytical results (e.g. mathematical models) on a cohort of tumor samples.
+
+
+# cevodata structure
+
+`cevodata` is an `S3` R class with the following elements:
+
+- metadata - tibble that associates sample IDs with patient IDs and contains all metadata about patients (such as sex, age, or molecular subtype of tumor) and samples (such as purity estimates),
+- SNVs - list of tibbles of SNVs and indels. Multiple tibbles can be stored with alternative lists of variants (different variant callers, data filtering settings, etc.),
+- CNAs - list of tibbles of CNAs. Multiple tibbles can be stored with alternative lists of variants,
+- stats - list of tibbles of statistics calculated for each sample, such as the cumulative tails, $M(f) ~ 1/f$ statistics, SFS spectra, and other sample-level and patient level statistics
+- models - stores models fitted by `cevomod`. All items in this list must be an objects of `cv_subitem` class, in particular all `model` components other than `model$info` or `model$settings` must be a plain tibbles with `patient_id` or `sample_id` columns.
+- misc - currently not used
+- settings - list that stores the names of the default SNV and CNA tibbles and the name of an active (last fitted) model object.
+
+
+
+# Adding data
+
+The user interface of cevomod was inspired by the tidyverse R packages ecosystem and is pipe-oriented. Most functions accept the cevodata as the first argument and return modified cevodata. This convention allows building pipelines, for e.g., to compose the cevodata object by adding new data components step by step. Let's create an example `cevodata` object. We will use the `test_data` dataset, which contains SNVs, CNAs, and metadata for 4 artificial samples.
+
+## Test data
+
+```{r}
+suppressPackageStartupMessages({
+  library(cevodata)
+  library(tidyverse)
+})
+
+theme_set(theme_minimal())
+
+snvs <- SNVs(test_data)
+cnas <- CNAs(test_data)
+metadata <- get_metadata(test_data)
+```
+
+`snvs` tibble contains SNVs for 4 artificial samples. It 11 columns describing the 16,000 variants in 4 samples. It needs to contain:
+
+- sample_id 
+- mutation_id and/or chrom, pos, ref, and alt columns
+- VAF column and/or ref_reads and alt_reads columns
+
+```{r}
+glimpse(snvs)
+```
+
+Similarly, `cnas` tibble contains the Copy Number Alterations for 4 artificial samples. It contains 8 columns, where the sample_id, chrom, start, and end are mandatory.
+
+```{r}
+glimpse(cnas)
+```
+
+`metadata` tibble associates sample IDs with patient IDs, and contains the data on patients' sex and samples' purity.
+
+```{r}
+metadata
+```
+
+## Prepare data
+
+Let's see what the sequencing depth of these variants is.
+
+```{r}
+ggplot(snvs, aes(sample_id, DP, fill = sample_id))+
+  geom_boxplot() +
+  scale_y_log10()
+```
+
+Variants with the lowest sequencing depth have the least accurate VAF values. One might want to filter out low-frequency variants to reduce the noise. Let's remove the variants with a sequencing depth of less than 20.
+
+```{r}
+filtered_snvs <- snvs |> 
+  filter(DP >= 20)
+```
+
+## Create cevodata object and add data
+
+Now let's create a `cevodata` and add all these data, including the all SNVs and the SNVs that pass the filter.
+
+```{r}
+cd <- init_cevodata(name = "Training cevodata") |>
+  add_SNV_data(filtered_snvs, name = "filtered_snvs") |> 
+  add_SNV_data(snvs, name = "all_Mutect_snvs") |> 
+  add_CNA_data(cnas) |>
+  add_metadata(metadata)
+
+cd
+```
+
+We can see that the default SNV tibble is the last one added (all SNVs). Let's assume that we want to use the filtered SNVs only. We can change the default SNV tibble using the `default_SNVs()` function. Similarly, one can use `default_CNAs()` function to choose the default CNAs tibble.
+
+```{r}
+default_SNVs(cd) <- "filtered_snvs"
+cd
+```
+
+Now, in all other steps the filtered SNVs will be used by default.
+
+# Getting data
+
+To get the SNV data from the object, one can use the `SNVs()` function. It returns the default SNV tibble.
+
+```{r}
+SNVs(cd)
+```
+
+Alternatively, other SNVs data can be requested using the `name` argument
+
+```{r}
+SNVs(cd, name = "all_Mutect_snvs")
+```
+
+Similarly, CNAs can be obtained using the `CNAs()` function.
+
+```{r}
+CNAs(cd)
+```
+
+To get the non-default CNAs, `name` argument can be specified.
+
+All metadata can be obtained with the `get_metadata()` function.
+
+```{r}
+get_metadata(cd)
+```
+
+Patient-specific data can be obtained with the `get_patients_data()` function. Let's assume that there's another sample available for Patient 1 and add its information to the metadata:
+
+```{r}
+new_metadata <- tibble(
+  patient_id = "Patient 1",
+  sample_id = "Sample 1b",
+  sex = "male",
+  purity = 0.8
+)
+
+cd <- cd |> 
+  add_metadata(new_metadata)
+```
+
+Since the purity column varies between samples, it is not included in the patient-specific data. Only the `sex` column, which is constant for all records within the patient, is returned.
+
+```{r}
+get_patients_data(cd)
+```
+
+# Stats and models
+
+Complex statistic tibbles and model objects can be added to the `stats` and `models` lists using the `add_stats()` and `add_models()` functions. Objects added to `stats` need to be tibbles with `sample_id` or `patient_id` columns. Objects added to `models` need to lists, in which all elements are tibbles with `sample_id` or `patient_id` columns. Only the `model$info` and `model$settings` components should be lists or vectors.
+
+```{r}
+my_stats <- SNVs(cd) |> 
+  group_by(sample_id) |> 
+  summarize(
+    n_snvs = n(),
+    mean_VAF = mean(VAF)
+  )
+cd <- add_stats(cd, my_stats, name = "my_stats")
+get_stats(cd, "my_stats")
+```
+
+```{r}
+my_model <- list(
+  coefs = tibble(
+    sample_id = c("Sample 1", "Sample 2"),
+    coef = c(0.1, 0.2)
+  ),
+  settings = list(model_type = "x")
+)
+cd <- add_models(cd, my_model, name = "my_model")
+get_models(cd, "my_model")
+```
+
+`add_stats()` is called internally by `calc_SFS()`, `calc_cumulative_tails()`, and `calc_Mf_1f()` functions. These statistics can be accessed using the `get_stats()` function, although more convenient helpers were implemented.
+
+```{r}
+cd <- calc_SFS(cd)
+# equal to get_stats(cd, "SFS"), but will also calculate the SFS 
+# if the SFS slot is empty
+get_SFS(cd) 
+```
+
+To learn mode about the implemented statistics, check the [Statistics](https://pawelqs.github.io/cevodata/articles/statistics.html) vignette. To learn more about the implemented models, check the [cevomod](https://pawelqs.github.io/cevomod/) modelling package.
