@@ -20,7 +20,7 @@ devtools::install_github("pawelqs/cevodata")
 
 ## Example
 
-This is a basic example which shows how to create a `cevodata` object and to plot the VAF spectra:
+The user interface of cevomod was inspired by the tidyverse R packages ecosystem and is pipe-oriented. Most functions accept the `cevodata` as the first argument and return modified `cevodata`. This convention allows building pipelines, for e.g., to compose the `cevodata` object by adding new data components step by step. This is a basic example which shows how to create a `cevodata` object and to plot the VAF spectra:
 
 ``` r
 library(cevodata)
