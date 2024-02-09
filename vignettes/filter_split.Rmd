@@ -7,6 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+# Transformations
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -18,15 +20,13 @@ knitr::opts_chunk$set(
 library(cevodata)
 ```
 
-# Transformations
-
 3 cevodata transforming functions have been implemented:
 
 - `filter()`
 - `split_by()`
 - `merge()`
 
-## Filter()
+## filter()
 
 `filter()` can be used to subset the cevodata using any metadata columns in a tidyverse manner
 

@@ -1,0 +1,93 @@
+---
+title: "Statistics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Statistics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Intro
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cevodata)
+theme_set(theme_minimal())
+```
+
+**Document under construction**
+
+# SFS
+
+```{r}
+cd <- calc_SFS(test_data)
+names(cd$stats)
+```
+
+```{r}
+get_SFS(cd)
+```
+
+```{r}
+plot_SFS(cd)
+```
+
+```{r}
+plot_SFS(cd) +
+  aes(fill = sex)
+```
+
+# Cumulative tails
+
+```{r}
+cd <- calc_cumulative_tails(cd)
+names(cd$stats)
+```
+
+```{r}
+get_cumulative_tails(cd)
+```
+
+```{r}
+plot_cumulative_tails(cd)
+```
+
+
+# M(f) ~ 1/f
+
+```{r}
+cd <- calc_Mf_1f(cd)
+names(cd$stats)
+```
+
+```{r}
+get_Mf_1f(cd)
+```
+
+```{r}
+plot_Mf_1f(cd)
+```
+
+
+# Sample level statistics
+
+```{r}
+cd <- test_data
+cd$metadata$patient_id <- c("Patient 1", "Patient 1", "Patient 2", "Patient 3")
+calc_all_sample_stats(cd) |> 
+  get_stats("sample_stats")
+```
+
+# Patient level statistics
+
+```{r}
+calc_all_patient_stats(cd) |> 
+  get_stats("patient_stats")
+```
+
