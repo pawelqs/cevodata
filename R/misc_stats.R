@@ -1,10 +1,11 @@
 #' Calc extra sample/patient stats
 #'
+#' `r lifecycle::badge("experimental")`
 #' Calculated stats are saved to appropriate cevodata$stats slots and can be
 #' obtained with get_stats() function.
 #'
 #' @param object cevodata object
-#' @param snvs Which SNVs to use
+#' @param snvs_name Which SNVs to use
 #' @name misc_stats
 NULL
 
@@ -16,9 +17,9 @@ NULL
 #' Currently calculates only the sample mutation burden
 #'
 #' @export
-calc_all_sample_stats <- function(object, snvs = default_SNVs(object)) {
+calc_all_sample_stats <- function(object, snvs_name = default_SNVs(object)) {
   stats <- list(
-    calc_sample_mutation_burden(object, snvs = snvs)
+    calc_sample_mutation_burden(object, snvs_name = snvs_name)
   )
 
   stats_merged <- if (length(stats) == 1) {
@@ -31,13 +32,13 @@ calc_all_sample_stats <- function(object, snvs = default_SNVs(object)) {
 }
 
 
-calc_sample_mutation_burden <- function(object, snvs = default_SNVs(object), ...) {
-  snvs <- SNVs(object, which = which)
+calc_sample_mutation_burden <- function(object, snvs_name = default_SNVs(object), ...) {
+  snvs <- SNVs(object, name = snvs_name)
   if ("mutation_id" %not in% colnames(snvs)) {
     snvs <- unite_mutation_id(snvs)
   }
 
-  SNVs(object, which = snvs) |>
+  snvs |>
     filter(.data$VAF > 0, !is.na(.data$VAF)) |>
     select("sample_id", "mutation_id") |>
     unique() |>
@@ -53,9 +54,9 @@ calc_sample_mutation_burden <- function(object, snvs = default_SNVs(object), ...
 #' Currently calculates only the patient mutation burden
 #'
 #' @export
-calc_all_patient_stats <- function(object, snvs = default_SNVs(object)) {
+calc_all_patient_stats <- function(object, snvs_name = default_SNVs(object)) {
   stats <- list(
-    calc_patient_mutation_burden(object, snvs = snvs)
+    calc_patient_mutation_burden(object, snvs_name = snvs_name)
   )
 
   stats_merged <- if (length(stats) == 1) {
@@ -68,8 +69,8 @@ calc_all_patient_stats <- function(object, snvs = default_SNVs(object)) {
 }
 
 
-calc_patient_mutation_burden <- function(object, snvs = default_SNVs(object)) {
-  snvs <- SNVs(object, which = which)
+calc_patient_mutation_burden <- function(object, snvs_name = default_SNVs(object)) {
+  snvs <- SNVs(object, name = snvs_name)
   if ("mutation_id" %not in% colnames(snvs)) {
     snvs <- unite_mutation_id(snvs)
   }
@@ -91,9 +92,9 @@ calc_patient_mutation_burden <- function(object, snvs = default_SNVs(object)) {
 #' Currently calculates only the Jaccard index
 #'
 #' @export
-calc_sample_sample_stats <- function(object, snvs = default_SNVs(object)) {
+calc_sample_sample_stats <- function(object, snvs_name = default_SNVs(object)) {
   stats <- list(
-    if ("sample" %in% names(get_metadata(object))) calc_Jaccard_indexes(object, snvs = snvs)
+    if ("sample" %in% names(get_metadata(object))) calc_Jaccard_indexes(object, snvs_name = snvs_name)
   )
   stats <- stats[!map_lgl(stats, is.null)]
 
@@ -110,14 +111,14 @@ calc_sample_sample_stats <- function(object, snvs = default_SNVs(object)) {
 }
 
 
-calc_Jaccard_indexes <- function(object, snvs = default_SNVs(object)) {
+calc_Jaccard_indexes <- function(object, snvs_name = default_SNVs(object)) {
   require_columns(get_metadata(object), c("patient_id", "sample"))
   patients_to_keep <- get_metadata(object) |>
     count(.data$patient_id) |>
     filter(n > 1) |>
     pull("patient_id")
 
-  snvs <- SNVs(object, which = which) |>
+  snvs <- SNVs(object, name = snvs_name) |>
     filter(.data$VAF > 0) |>
     join_metadata(object) |>
     filter(.data$patient_id %in% patients_to_keep)

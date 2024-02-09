@@ -10,6 +10,7 @@
 #' @import stringr
 #' @import tibble
 #' @import tidyr
+#' @importFrom lifecycle deprecated
 #' @importFrom rlang :=
 #' @importFrom rlang .data
 #' @importFrom rlang .env

@@ -8,6 +8,13 @@
 \description{
 cevodata provides a <cevodata> class, an R class for storing the DNA sequencing data for many patients and many tumor samples in a signle object, and methods to manipulate it.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://pawelqs.github.io/cevodata/}
+}
+
+}
 \author{
 \strong{Maintainer}: Paweł Kuś \email{kpawel2210@gmail.com} (\href{https://orcid.org/0000-0002-4367-9821}{ORCID})
 
