@@ -37,7 +37,7 @@ calc_sample_mutation_burden <- function(object, snvs_name = default_SNVs(object)
     snvs <- unite_mutation_id(snvs)
   }
 
-  SNVs(object, which = snvs) |>
+  snvs |>
     filter(.data$VAF > 0, !is.na(.data$VAF)) |>
     select("sample_id", "mutation_id") |>
     unique() |>
