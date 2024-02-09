@@ -19,6 +19,9 @@ calc_sample_sample_stats(object, snvs_name = default_SNVs(object))
 \item{snvs_name}{Which SNVs to use}
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
+\details{
 Calculated stats are saved to appropriate cevodata$stats slots and can be
 obtained with get_stats() function.
 }

@@ -1,5 +1,6 @@
 #' Calc extra sample/patient stats
 #'
+#' `r lifecycle::badge("experimental")`
 #' Calculated stats are saved to appropriate cevodata$stats slots and can be
 #' obtained with get_stats() function.
 #'
