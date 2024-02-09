@@ -43,7 +43,9 @@ The user interface of cevomod was inspired by the tidyverse R packages ecosystem
 ```{r}
 suppressPackageStartupMessages({
   library(cevodata)
-  library(tidyverse)
+  library(dplyr)
+  library(tibble)
+  library(ggplot2)
 })
 
 theme_set(theme_minimal())
