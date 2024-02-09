@@ -1,4 +1,21 @@
 url: https://pawelqs.github.io/cevodata/
 template:
   bootstrap: 5
+  bootswatch: flatly
+  bslib:
+    pkgdown-nav-height: 100px
 
+home:
+  links:
+  - text: Source Code
+    href: https://github.com/pawelqs/cevodata
+  - text: Bug Reports
+    href: https://github.com/pawelqs/cevodata/issues
+
+articles:
+- title: Tutorials
+  navbar: ~
+  contents:
+  - cevodata_construction
+  - filter_split
+  - statistics
