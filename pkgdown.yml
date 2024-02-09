@@ -1,0 +1,12 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  cevodata_construction: cevodata_construction.html
+  filter_split: filter_split.html
+  statistics: statistics.html
+last_built: 2024-02-09T18:59Z
+urls:
+  reference: https://pawelqs.github.io/cevodata/reference
+  article: https://pawelqs.github.io/cevodata/articles
+
