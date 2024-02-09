@@ -12,6 +12,60 @@ home:
   - text: Bug Reports
     href: https://github.com/pawelqs/cevodata/issues
 
+reference:
+- title: Init cevodata
+- contents:
+  - init_cevodata
+- title: Basic setters and getters
+- contents:
+  - starts_with("add")
+  - SNVs
+  - CNAs
+  - SNVs_CNAs
+  - get_stats
+  - get_models
+  - get_metadata
+  - get_patients_data
+- title: Transformations
+- contents:
+  - filter.cevodata
+  - split_by
+  - merge.cevodata
+- title: More stats
+- contents:
+  - starts_with("calc_")
+  - starts_with("plot_")
+  - plot.cevo_Mf_1f_tbl
+  - plot.cevo_SFS_tbl
+  - plot.cevo_cumulative_tails_tbl
+- title: Data
+- contents:
+  - driver_genes
+  - tcga_brca_test
+  - test_data
+- title: Other functions
+- contents:
+  - annotate_normal_cn
+  - as_cevo_snvs
+  - filter_SNVs_by_regions
+  - intervalize_mutation_frequencies
+  - join_metadata
+  - quick_load
+  - set_snvs_frequency_measure
+  - settings
+  - unite_mutation_id
+  - update.cevodata
+  - update_cevodata_v2_to_v3
+  - use_purity
+  - "`%not in%`"
+- title: External integrations
+- contents:
+  - export_to_clip
+- title: internal
+  contents:
+  - stat_cumulative_tail
+
+
 articles:
 - title: Tutorials
   navbar: ~
